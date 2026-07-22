@@ -1,0 +1,257 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role      @default(EMPLOYEE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  employee      Employee?
+  doctor        Doctor?
+}
+
+enum Role {
+  ADMIN
+  DOCTOR
+  EMPLOYEE
+}
+
+model Employee {
+  id            String    @id @default(uuid())
+  name          String
+  cpf           String    @unique
+  phone         String
+  email         String    @unique
+  address       String
+  position      String
+  salary        Float
+  admissionDate DateTime
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  userId        String?   @unique
+  user          User?     @relation(fields: [userId], references: [id])
+}
+
+model Doctor {
+  id              String      @id @default(uuid())
+  name            String
+  cpf             String      @unique
+  crm             String      @unique
+  phone           String
+  email           String      @unique
+  specialtyId     String
+  specialty       Specialty   @relation(fields: [specialtyId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  appointments    Appointment[]
+  surgeries       SurgerySchedule[]
+  medicalRecords  MedicalRecord[]
+  admissions      Admission[]
+  userId          String?     @unique
+  user            User?       @relation(fields: [userId], references: [id])
+}
+
+model Specialty {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  doctors     Doctor[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Patient {
+  id              String          @id @default(uuid())
+  name            String
+  cpf             String          @unique
+  rg              String
+  phone           String
+  email           String?
+  address         String
+  birthDate       DateTime
+  bloodType       String?
+  allergies       String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  appointments      Appointment[]
+  medicalRecords    MedicalRecord[]
+  bedReservations   BedReservation[]
+  surgerySchedules  SurgerySchedule[]
+  admissions        Admission[]
+}
+
+model Medication {
+  id            String    @id @default(uuid())
+  name          String
+  manufacturer  String
+  dosage        String
+  concentration String
+  category      String
+  stockQuantity Int
+  unitPrice     Float
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Surgery {
+  id            String            @id @default(uuid())
+  name          String
+  description   String?
+  duration      Int
+  riskLevel     RiskLevel
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  schedules     SurgerySchedule[]
+  materials     SurgeryMaterial[]
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model SurgerySchedule {
+  id          String    @id @default(uuid())
+  surgeryId   String
+  surgery     Surgery   @relation(fields: [surgeryId], references: [id])
+  doctorId    String
+  doctor      Doctor    @relation(fields: [doctorId], references: [id])
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  scheduledAt DateTime
+  status      SurgeryStatus @default(SCHEDULED)
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum SurgeryStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model SurgeryMaterial {
+  id        String  @id @default(uuid())
+  surgeryId String
+  surgery   Surgery @relation(fields: [surgeryId], references: [id])
+  name      String
+  quantity  Int
+  unit      String
+}
+
+model MedicalRecord {
+  id            String    @id @default(uuid())
+  patientId     String
+  patient       Patient   @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor    @relation(fields: [doctorId], references: [id])
+  diagnosis     String
+  treatment     String
+  notes         String?
+  attachments   String?
+  visitDate     DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Bed {
+  id            String          @id @default(uuid())
+  number        String          @unique
+  ward          String
+  floor         Int
+  status        BedStatus       @default(AVAILABLE)
+  bedType       BedType
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  reservations  BedReservation[]
+  admissions    Admission[]
+}
+
+enum BedStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  RESERVED
+}
+
+enum BedType {
+  REGULAR
+  ICU
+  EMERGENCY
+  PEDIATRIC
+}
+
+model BedReservation {
+  id          String    @id @default(uuid())
+  bedId       String
+  bed         Bed       @relation(fields: [bedId], references: [id])
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  checkIn     DateTime
+  checkOut    DateTime?
+  status      ReservationStatus @default(ACTIVE)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Admission {
+  id            String    @id @default(uuid())
+  patientId     String
+  patient       Patient   @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor    @relation(fields: [doctorId], references: [id])
+  bedId         String
+  bed           Bed       @relation(fields: [bedId], references: [id])
+  admissionDate DateTime
+  dischargeDate DateTime?
+  notes         String?
+  status        AdmissionStatus @default(ACTIVE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum AdmissionStatus {
+  ACTIVE
+  DISCHARGED
+  CANCELLED
+}
+
+enum ReservationStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Appointment {
+  id          String    @id @default(uuid())
+  patientId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  doctorId    String
+  doctor      Doctor    @relation(fields: [doctorId], references: [id])
+  scheduledAt DateTime
+  status      AppointmentStatus @default(SCHEDULED)
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
