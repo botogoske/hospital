@@ -42,10 +42,10 @@ next-env.d.ts
 
 /src/generated/prisma
 
-/.claude
-/.mimocode
+.claude/*   
+.mimocode/*
 skills-lock.json
-/.agents
+.agents/*
 CLAUDE.md
 SKILL.md
 AGENTS.md
