@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { healthPlanSchema, type HealthPlanInput } from "@/lib/validations";
+import { toUpper } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,7 +38,7 @@ export default function HealthPlansPage() {
     try {
       const url = editingPlan ? `/api/health-plans/${editingPlan.id}` : "/api/health-plans";
       const method = editingPlan ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(toUpper(data)) });
       if (res.ok) { setOpen(false); reset({ coverageType: "STANDARD" }); setSelectedCoverage("STANDARD"); setEditingPlan(null); fetchHealthPlans(); }
     } finally { setLoading(false); }
   };

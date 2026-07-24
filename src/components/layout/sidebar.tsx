@@ -55,7 +55,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-[#222222] bg-[#080808] text-[#EAEAEA]">
+    <aside className="flex h-full w-64 flex-col border-r border-[#222222] bg-[#080808] text-[#EAEAEA] shadow-[4px_0_24px_rgba(0,0,0,0.5)]">
       {/* Brand Header */}
       <div className="border-b border-[#222222] px-5 py-4">
         <div className="flex items-center gap-3">
@@ -74,7 +74,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation Groups */}
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4 scrollbar-thin">
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4 no-scrollbar">
         {menuGroups.map((group) => (
           <div key={group.title} className="space-y-1">
             <h3 className="px-2 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-[#444444]">

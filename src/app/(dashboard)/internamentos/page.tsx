@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { admissionSchema, type AdmissionInput } from "@/lib/validations";
+import { toUpper } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,7 +44,7 @@ export default function AdmissionsPage() {
   const onSubmit = async (data: AdmissionInput) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admissions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const res = await fetch("/api/admissions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(toUpper(data)) });
       if (res.ok) { setOpen(false); reset(); fetchAdmissions(); fetchBeds(); }
     } finally { setLoading(false); }
   };

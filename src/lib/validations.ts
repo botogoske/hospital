@@ -1,16 +1,27 @@
 import { z } from "zod";
+import { validateCpf, validatePhone, validateCep, validateRg } from "./masks";
 
 export const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
+  username: z.string().min(1, "Nome de usuário é obrigatório"),
   password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
 });
 
 export const employeeSchema = z.object({
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
-  cpf: z.string().min(14, "CPF inválido"),
-  phone: z.string().min(15, "Telefone inválido"),
+  cpf: z
+    .string()
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve ter o formato 000.000.000-00")
+    .refine((val) => validateCpf(val), "CPF inválido"),
+  phone: z
+    .string()
+    .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Telefone deve ter o formato (00) 00000-0000")
+    .refine((val) => validatePhone(val), "Telefone inválido"),
   email: z.string().email("Email inválido"),
   address: z.string().min(5, "Endereço deve ter no mínimo 5 caracteres"),
+  cep: z
+    .string()
+    .regex(/^\d{5}-\d{3}$/, "CEP deve ter o formato 00000-000")
+    .refine((val) => validateCep(val), "CEP inválido"),
   position: z.string().min(2, "Cargo é obrigatório"),
   salary: z.number().min(0, "Salário deve ser positivo"),
   admissionDate: z.string().min(1, "Data de admissão é obrigatória"),
@@ -18,20 +29,39 @@ export const employeeSchema = z.object({
 
 export const doctorSchema = z.object({
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
-  cpf: z.string().min(14, "CPF inválido"),
+  cpf: z
+    .string()
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve ter o formato 000.000.000-00")
+    .refine((val) => validateCpf(val), "CPF inválido"),
   crm: z.string().min(5, "CRM é obrigatório"),
-  phone: z.string().min(15, "Telefone inválido"),
+  phone: z
+    .string()
+    .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Telefone deve ter o formato (00) 00000-0000")
+    .refine((val) => validatePhone(val), "Telefone inválido"),
   email: z.string().email("Email inválido"),
   specialtyId: z.string().min(1, "Especialidade é obrigatória"),
 });
 
 export const patientSchema = z.object({
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
-  cpf: z.string().min(14, "CPF inválido"),
-  rg: z.string().min(5, "RG é obrigatório"),
-  phone: z.string().min(15, "Telefone inválido"),
+  cpf: z
+    .string()
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve ter o formato 000.000.000-00")
+    .refine((val) => validateCpf(val), "CPF inválido"),
+  rg: z
+    .string()
+    .regex(/^\d{2}\.\d{3}\.\d{3}-?[\dXx]$/, "RG deve ter o formato XX.XXX.XXX-X")
+    .refine((val) => validateRg(val), "RG inválido"),
+  phone: z
+    .string()
+    .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Telefone deve ter o formato (00) 00000-0000")
+    .refine((val) => validatePhone(val), "Telefone inválido"),
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   address: z.string().min(5, "Endereço deve ter no mínimo 5 caracteres"),
+  cep: z
+    .string()
+    .regex(/^\d{5}-\d{3}$/, "CEP deve ter o formato 00000-000")
+    .refine((val) => validateCep(val), "CEP inválido"),
   birthDate: z.string().min(1, "Data de nascimento é obrigatória"),
   bloodType: z.string().optional(),
   allergies: z.string().optional(),

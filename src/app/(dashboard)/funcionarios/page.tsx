@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { employeeSchema, type EmployeeInput } from "@/lib/validations";
+import { toUpper } from "@/lib/utils";
+import { maskCpf, maskPhone, maskCep } from "@/lib/masks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { HiPlus, HiPencil, HiTrash, HiUsers } from "react-icons/hi";
 
-interface Employee { id: string; name: string; cpf: string; phone: string; email: string; address: string; position: string; salary: number; admissionDate: string; }
+interface Employee { id: string; name: string; cpf: string; phone: string; email: string; address: string; cep: string; position: string; salary: number; admissionDate: string; }
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -21,6 +23,18 @@ export default function EmployeesPage() {
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<EmployeeInput>({ resolver: zodResolver(employeeSchema) });
 
+  const handleCpfChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("cpf", maskCpf(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
+  const handlePhoneChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("phone", maskPhone(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
+  const handleCepChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("cep", maskCep(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
   useEffect(() => { fetchEmployees(); }, []);
   const fetchEmployees = async () => { const res = await fetch("/api/employees"); if (res.ok) setEmployees(await res.json()); };
 
@@ -29,7 +43,7 @@ export default function EmployeesPage() {
     try {
       const url = editingEmployee ? `/api/employees/${editingEmployee.id}` : "/api/employees";
       const method = editingEmployee ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(toUpper(data)) });
       if (res.ok) { setOpen(false); reset(); setEditingEmployee(null); fetchEmployees(); }
     } finally { setLoading(false); }
   };
@@ -37,7 +51,7 @@ export default function EmployeesPage() {
   const handleEdit = (employee: Employee) => {
     setEditingEmployee(employee);
     setValue("name", employee.name); setValue("cpf", employee.cpf); setValue("phone", employee.phone);
-    setValue("email", employee.email); setValue("address", employee.address); setValue("position", employee.position);
+    setValue("email", employee.email); setValue("address", employee.address); setValue("cep", employee.cep); setValue("position", employee.position);
     setValue("salary", employee.salary); setValue("admissionDate", employee.admissionDate.split("T")[0]);
     setOpen(true);
   };
@@ -70,10 +84,11 @@ export default function EmployeesPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NOME</Label><Input {...register("name")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.name && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.name.message}</p>}</div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CPF</Label><Input {...register("cpf")} placeholder="000.000.000-00" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.cpf && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cpf.message}</p>}</div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TELEFONE</Label><Input {...register("phone")} placeholder="(00) 00000-0000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.phone && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.phone.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CPF</Label><Input {...register("cpf")} onChange={handleCpfChange} maxLength={14} placeholder="000.000.000-00" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.cpf && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cpf.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TELEFONE</Label><Input {...register("phone")} onChange={handlePhoneChange} maxLength={15} placeholder="(00) 00000-0000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.phone && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.phone.message}</p>}</div>
                   <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; EMAIL</Label><Input type="email" {...register("email")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.email && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.email.message}</p>}</div>
                   <div className="col-span-2 space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ENDERECO</Label><Input {...register("address")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.address && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.address.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CEP</Label><Input {...register("cep")} onChange={handleCepChange} maxLength={9} placeholder="00000-000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.cep && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cep.message}</p>}</div>
                   <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CARGO</Label><Input {...register("position")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.position && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.position.message}</p>}</div>
                   <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; SALARIO</Label><Input type="number" step="0.01" {...register("salary", { valueAsNumber: true })} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.salary && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.salary.message}</p>}</div>
                   <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; DATA DE ADMISSAO</Label><Input type="date" {...register("admissionDate")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.admissionDate && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.admissionDate.message}</p>}</div>

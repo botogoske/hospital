@@ -51,13 +51,21 @@ export default function LoginPage() {
   return (
     <div className="relative w-full max-w-md">
       {/* Crosshair top-left */}
-      <div className="absolute -top-8 -left-8 text-[#333333] font-mono text-xs select-none">+</div>
+      <div className="absolute -top-8 -left-8 text-[#333333] font-mono text-xs select-none">
+        +
+      </div>
       {/* Crosshair top-right */}
-      <div className="absolute -top-8 -right-8 text-[#333333] font-mono text-xs select-none">+</div>
+      <div className="absolute -top-8 -right-8 text-[#333333] font-mono text-xs select-none">
+        +
+      </div>
       {/* Crosshair bottom-left */}
-      <div className="absolute -bottom-8 -left-8 text-[#333333] font-mono text-xs select-none">+</div>
+      <div className="absolute -bottom-8 -left-8 text-[#333333] font-mono text-xs select-none">
+        +
+      </div>
       {/* Crosshair bottom-right */}
-      <div className="absolute -bottom-8 -right-8 text-[#333333] font-mono text-xs select-none">+</div>
+      <div className="absolute -bottom-8 -right-8 text-[#333333] font-mono text-xs select-none">
+        +
+      </div>
 
       <div className="border border-[#333333] bg-[#111111] p-0">
         {/* Header */}
@@ -83,7 +91,11 @@ export default function LoginPage() {
             [ AUTH MODULE v2.6 ]
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777]">
-            {new Date().toLocaleDateString("pt-BR")} {new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+            {new Date().toLocaleDateString("pt-BR")}{" "}
+            {new Date().toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </span>
         </div>
 
@@ -103,15 +115,17 @@ export default function LoginPage() {
               <div className="relative">
                 <FaUserMd className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#777777]" />
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="medico@hospital.com"
+                  id="username"
+                  type="text"
+                  placeholder="Nome de usuario"
                   className="h-10 border border-[#333333] bg-[#0D0D0D] pl-10 font-mono text-xs text-[#EAEAEA] placeholder:text-[#444444] focus:border-[#E61919] focus:ring-0 rounded-none"
-                  {...register("email")}
+                  {...register("username")}
                 />
               </div>
-              {errors.email && (
-                <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.email.message}</p>
+              {errors.username && (
+                <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                  {errors.username.message}
+                </p>
               )}
             </div>
 
@@ -130,7 +144,9 @@ export default function LoginPage() {
                 />
               </div>
               {errors.password && (
-                <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.password.message}</p>
+                <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -144,7 +160,7 @@ export default function LoginPage() {
 
             <div className="pt-2 text-center">
               <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-[#444444]">
-                /// CONEXAO CRIPTOGRAFADA SSL END-TO-END ///
+                CONEXAO CRIPTOGRAFADA SSL END-TO-END
               </p>
             </div>
           </form>
@@ -153,7 +169,8 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="border-t border-[#333333] bg-[#0D0D0D] px-6 py-2">
           <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#333333] text-center">
-            REV 2.6 &middot; UNIT / AUTH-01 &middot; HOSPITAL GREGUITO &copy; 2026
+            REV 2.6 &middot; UNIT / AUTH-01 &middot; HOSPITAL GREGUITO &copy;
+            2026
           </p>
         </div>
       </div>

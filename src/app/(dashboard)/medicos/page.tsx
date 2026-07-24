@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { doctorSchema, type DoctorInput } from "@/lib/validations";
+import { toUpper } from "@/lib/utils";
+import { maskCpf, maskPhone } from "@/lib/masks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,6 +47,14 @@ export default function DoctorsPage() {
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<DoctorInput>({ resolver: zodResolver(doctorSchema) });
 
+  const handleCpfChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("cpf", maskCpf(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
+  const handlePhoneChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("phone", maskPhone(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
   useEffect(() => { fetchDoctors(); fetchSpecialties(); }, []);
 
   const fetchDoctors = async () => { const res = await fetch("/api/doctors"); if (res.ok) setDoctors(await res.json()); };
@@ -55,7 +65,7 @@ export default function DoctorsPage() {
     try {
       const url = editingDoctor ? `/api/doctors/${editingDoctor.id}` : "/api/doctors";
       const method = editingDoctor ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(toUpper(data)) });
       if (res.ok) { setOpen(false); reset(); setSelectedSpecialty(""); setEditingDoctor(null); fetchDoctors(); }
     } finally { setLoading(false); }
   };
@@ -96,9 +106,9 @@ export default function DoctorsPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NOME</Label><Input {...register("name")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.name && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.name.message}</p>}</div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CPF</Label><Input {...register("cpf")} placeholder="000.000.000-00" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.cpf && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cpf.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CPF</Label><Input {...register("cpf")} onChange={handleCpfChange} maxLength={14} placeholder="000.000.000-00" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.cpf && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cpf.message}</p>}</div>
                   <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CRM</Label><Input {...register("crm")} placeholder="CRM-00000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.crm && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.crm.message}</p>}</div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TELEFONE</Label><Input {...register("phone")} placeholder="(00) 00000-0000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.phone && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.phone.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TELEFONE</Label><Input {...register("phone")} onChange={handlePhoneChange} maxLength={15} placeholder="(00) 00000-0000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.phone && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.phone.message}</p>}</div>
                   <div className="col-span-2 space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; EMAIL</Label><Input type="email" {...register("email")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.email && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.email.message}</p>}</div>
                   <div className="col-span-2 space-y-1.5">
                     <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ESPECIALIDADE</Label>

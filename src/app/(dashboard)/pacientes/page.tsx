@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { patientSchema, type PatientInput } from "@/lib/validations";
+import { toUpper } from "@/lib/utils";
+import { maskCpf, maskPhone, maskCep, maskRg } from "@/lib/masks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,6 +34,7 @@ interface Patient {
   email?: string;
   rg: string;
   address: string;
+  cep: string;
   birthDate: string;
   bloodType?: string;
   allergies?: string;
@@ -54,6 +57,22 @@ export default function PatientsPage() {
     resolver: zodResolver(patientSchema),
   });
 
+  const handleCpfChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("cpf", maskCpf(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
+  const handlePhoneChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("phone", maskPhone(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
+  const handleCepChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("cep", maskCep(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
+  const handleRgChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue("rg", maskRg(e.target.value), { shouldValidate: true });
+  }, [setValue]);
+
   useEffect(() => {
     fetchPatients();
   }, []);
@@ -73,7 +92,7 @@ export default function PatientsPage() {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(toUpper(data)),
       });
       if (res.ok) {
         setOpen(false);
@@ -94,6 +113,7 @@ export default function PatientsPage() {
     setValue("phone", patient.phone);
     setValue("email", patient.email || "");
     setValue("address", patient.address);
+    setValue("cep", patient.cep);
     setValue("birthDate", patient.birthDate.split("T")[0]);
     setValue("bloodType", patient.bloodType || "");
     setValue("allergies", patient.allergies || "");
@@ -165,17 +185,17 @@ export default function PatientsPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CPF</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("cpf")} placeholder="000.000.000-00" />
+                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("cpf")} onChange={handleCpfChange} maxLength={14} placeholder="000.000.000-00" />
                     {errors.cpf && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cpf.message}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; RG</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("rg")} />
+                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("rg")} onChange={handleRgChange} maxLength={12} placeholder="XX.XXX.XXX-X" />
                     {errors.rg && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.rg.message}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TELEFONE / WHATSAPP</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("phone")} placeholder="(00) 00000-0000" />
+                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("phone")} onChange={handlePhoneChange} maxLength={15} placeholder="(00) 00000-0000" />
                     {errors.phone && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.phone.message}</p>}
                   </div>
                   <div className="space-y-1.5">
@@ -195,6 +215,11 @@ export default function PatientsPage() {
                     <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ENDERECO RESIDENCIAL</Label>
                     <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("address")} />
                     {errors.address && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.address.message}</p>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CEP</Label>
+                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("cep")} onChange={handleCepChange} maxLength={9} placeholder="00000-000" />
+                    {errors.cep && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cep.message}</p>}
                   </div>
                   <div className="col-span-2 space-y-1.5">
                     <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ALERGIAS / OBSERVACOES</Label>
@@ -236,6 +261,7 @@ export default function PatientsPage() {
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PACIENTE</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">CPF</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">TELEFONE</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">CEP</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">TIPO SANGUINEO</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">NASCIMENTO</TableHead>
                 <TableHead className="text-right font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">ACOES</TableHead>
@@ -263,6 +289,7 @@ export default function PatientsPage() {
                     </TableCell>
                     <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{p.cpf}</TableCell>
                     <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{p.phone}</TableCell>
+                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{p.cep}</TableCell>
                     <TableCell>
                       {p.bloodType ? (
                         <span className="inline-flex items-center gap-1 border border-[#E61919]/30 bg-[#E61919]/10 px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-[#E61919]">
@@ -290,7 +317,7 @@ export default function PatientsPage() {
               })}
               {filteredPatients.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">
+                  <TableCell colSpan={7} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">
                     NENHUM PACIENTE ENCONTRADO.
                   </TableCell>
                 </TableRow>

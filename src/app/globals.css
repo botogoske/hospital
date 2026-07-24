@@ -135,6 +135,15 @@ body::after {
   background-size: 256px 256px;
 }
 
+/* ===== SCROLLBAR — HIDDEN ===== */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
 /* ===== SCROLLBAR — INDUSTRIAL ===== */
 ::-webkit-scrollbar {
   width: 4px;
@@ -148,6 +157,24 @@ body::after {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #E61919;
+}
+
+/* ===== FORM INPUTS — FORCED UPPERCASE ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+input:not([type]),
+textarea,
+select {
+  text-transform: uppercase;
+}
+
+input::placeholder,
+textarea::placeholder {
+  text-transform: uppercase;
 }
 
 /* ===== SELECTION ===== */

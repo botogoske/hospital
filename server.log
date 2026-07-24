@@ -1,0 +1,13 @@
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.18.0.1:3000
+- Environments: .env
+✓ Ready in 740ms
+
+ POST /api/auth/login 200 in 1015ms (next.js: 513ms, application-code: 502ms)
+ GET /login 200 in 724ms (next.js: 197ms, application-code: 526ms)
+ POST /api/auth/login 401 in 50ms (next.js: 10ms, application-code: 41ms)
+ POST /api/auth/login 401 in 43ms (next.js: 18ms, application-code: 25ms)
+ POST /api/auth/login 401 in 41ms (next.js: 19ms, application-code: 22ms)
+ POST /api/auth/login 401 in 30ms (next.js: 13ms, application-code: 18ms)
+[?25h

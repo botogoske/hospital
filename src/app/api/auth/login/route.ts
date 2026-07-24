@@ -4,9 +4,9 @@ import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
   try {
-    const { email, password } = await request.json();
+    const { username, password } = await request.json();
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { username } });
     if (!user) {
       return NextResponse.json(
         { error: "Credenciais inválidas" },
@@ -24,6 +24,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       id: user.id,
+      username: user.username,
       name: user.name,
       email: user.email,
       role: user.role,
