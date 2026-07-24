@@ -71,7 +71,7 @@ export default function LoginPage() {
 
             <div className="space-y-1">
               <CardTitle className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
-                Hospital System
+                Hospital Greguito
               </CardTitle>
               <CardDescription className="text-xs font-medium text-slate-400">
                 Plataforma integrada de gestão hospitalar & clínica

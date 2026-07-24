@@ -11,6 +11,7 @@ import {
   HiUsers,
   HiLogout,
   HiSparkles,
+  HiShieldCheck,
 } from "react-icons/hi";
 import {
   FaUserMd,
@@ -46,6 +47,7 @@ const menuGroups = [
       { href: "/funcionarios", label: "Funcionários", icon: HiUsers },
       { href: "/medicamentos", label: "Medicamentos", icon: HiBeaker },
       { href: "/leitos", label: "Leitos", icon: FaBed },
+      { href: "/planos-de-saude", label: "Planos de Saúde", icon: HiShieldCheck },
     ],
   },
 ];
@@ -62,7 +64,7 @@ export function Sidebar() {
         </div>
         <div className="flex flex-col">
           <span className="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
-            Hospital System
+            Hospital Greguito
           </span>
           <span className="text-[11px] font-medium text-slate-400 flex items-center gap-1">
             <HiSparkles className="h-3 w-3 text-amber-400" /> Gestão Inteligente

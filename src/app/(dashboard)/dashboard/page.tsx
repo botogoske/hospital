@@ -40,6 +40,7 @@ interface Stats {
   totalMedicalRecords: number;
   totalEmployees: number;
   totalAdmissions: number;
+  totalHealthPlans: number;
 }
 
 export default function DashboardPage() {
@@ -62,6 +63,7 @@ export default function DashboardPage() {
           totalMedicalRecords: 2150,
           totalEmployees: 110,
           totalAdmissions: 32,
+          totalHealthPlans: 8,
         });
       });
   }, []);
@@ -140,6 +142,15 @@ export default function DashboardPage() {
           trend: "+32 hoje",
           isPositive: true,
         },
+        {
+          title: "Planos de Saúde",
+          value: stats.totalHealthPlans.toLocaleString("pt-BR"),
+          description: "Convênios ativos",
+          icon: HiShieldCheck,
+          gradient: "from-teal-500 to-cyan-600",
+          trend: "Ativos",
+          isPositive: true,
+        },
       ]
     : [];
 
@@ -157,7 +168,7 @@ export default function DashboardPage() {
               <span>Painel de Controle Hospitalar</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              Bem-vindo ao Hospital System
+              Bem-vindo ao Hospital Greguito
             </h1>
             <p className="max-w-2xl text-sm text-slate-300">
               Visão consolidada em tempo real da ocupação de leitos, cirurgias agendadas e atendimento a pacientes.
@@ -266,6 +277,16 @@ export default function DashboardPage() {
               <div>
                 <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Mapa Cirúrgico</h4>
                 <p className="text-xs text-slate-500 mt-0.5">Visualizar horários de salas de cirurgia</p>
+              </div>
+            </Link>
+
+            <Link href="/planos-de-saude" className="group flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-teal-500/30 hover:bg-teal-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                <HiShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Planos de Saúde</h4>
+                <p className="text-xs text-slate-500 mt-0.5">Gerenciar convênios e coberturas</p>
               </div>
             </Link>
           </CardContent>

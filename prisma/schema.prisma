@@ -235,17 +235,37 @@ enum ReservationStatus {
   CANCELLED
 }
 
+model HealthPlan {
+  id                 String       @id @default(uuid())
+  name               String
+  provider           String
+  registrationNumber String       @unique
+  coverageType       CoverageType @default(STANDARD)
+  isActive           Boolean      @default(true)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  appointments       Appointment[]
+}
+
+enum CoverageType {
+  BASIC
+  STANDARD
+  PREMIUM
+}
+
 model Appointment {
-  id          String    @id @default(uuid())
-  patientId   String
-  patient     Patient   @relation(fields: [patientId], references: [id])
-  doctorId    String
-  doctor      Doctor    @relation(fields: [doctorId], references: [id])
-  scheduledAt DateTime
-  status      AppointmentStatus @default(SCHEDULED)
-  notes       String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(uuid())
+  patientId     String
+  patient       Patient   @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor    @relation(fields: [doctorId], references: [id])
+  healthPlanId  String?
+  healthPlan    HealthPlan? @relation(fields: [healthPlanId], references: [id])
+  scheduledAt   DateTime
+  status        AppointmentStatus @default(SCHEDULED)
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 enum AppointmentStatus {

@@ -13,6 +13,7 @@ export async function GET() {
     totalMedicalRecords,
     totalEmployees,
     totalAdmissions,
+    totalHealthPlans,
   ] = await Promise.all([
     prisma.patient.count(),
     prisma.doctor.count(),
@@ -38,6 +39,7 @@ export async function GET() {
     prisma.medicalRecord.count(),
     prisma.employee.count(),
     prisma.admission.count({ where: { status: "ACTIVE" } }),
+    prisma.healthPlan.count({ where: { isActive: true } }),
   ]);
 
   return NextResponse.json({
@@ -51,5 +53,6 @@ export async function GET() {
     totalMedicalRecords,
     totalEmployees,
     totalAdmissions,
+    totalHealthPlans,
   });
 }

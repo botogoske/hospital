@@ -43,15 +43,23 @@ interface Doctor {
   name: string;
 }
 
+interface HealthPlan {
+  id: string;
+  name: string;
+  provider: string;
+}
+
 interface Appointment {
   id: string;
   patientId: string;
   doctorId: string;
+  healthPlanId?: string;
   scheduledAt: string;
   status: string;
   notes?: string;
   patient: { name: string };
   doctor: { name: string; specialty: { name: string } };
+  healthPlan?: { name: string; provider: string } | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -74,10 +82,12 @@ export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [healthPlans, setHealthPlans] = useState<HealthPlan[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [selectedHealthPlan, setSelectedHealthPlan] = useState("");
   const [search, setSearch] = useState("");
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [startDate, setStartDate] = useState("");
@@ -97,6 +107,7 @@ export default function AppointmentsPage() {
     fetchAppointments();
     fetchPatients();
     fetchDoctors();
+    fetchHealthPlans();
   }, []);
 
   const fetchAppointments = async () => {
@@ -112,6 +123,11 @@ export default function AppointmentsPage() {
   const fetchDoctors = async () => {
     const res = await fetch("/api/doctors");
     if (res.ok) setDoctors(await res.json());
+  };
+
+  const fetchHealthPlans = async () => {
+    const res = await fetch("/api/health-plans");
+    if (res.ok) setHealthPlans(await res.json());
   };
 
   const onSubmit = async (data: AppointmentInput) => {
@@ -132,6 +148,7 @@ export default function AppointmentsPage() {
         reset();
         setSelectedPatient("");
         setSelectedDoctor("");
+        setSelectedHealthPlan("");
         setEditingAppointment(null);
         fetchAppointments();
       }
@@ -144,8 +161,10 @@ export default function AppointmentsPage() {
     setEditingAppointment(appointment);
     setSelectedPatient(appointment.patientId);
     setSelectedDoctor(appointment.doctorId);
+    setSelectedHealthPlan(appointment.healthPlanId || "");
     setValue("patientId", appointment.patientId);
     setValue("doctorId", appointment.doctorId);
+    setValue("healthPlanId", appointment.healthPlanId || "");
     setValue("scheduledAt", appointment.scheduledAt.slice(0, 16));
     setValue("notes", appointment.notes || "");
     setOpen(true);
@@ -192,13 +211,14 @@ export default function AppointmentsPage() {
       a.patient.name,
       a.doctor.name,
       a.doctor.specialty.name,
+      a.healthPlan ? `${a.healthPlan.name} (${a.healthPlan.provider})` : "Particular",
       new Date(a.scheduledAt).toLocaleString("pt-BR"),
       statusLabels[a.status] || a.status,
     ]);
 
     autoTable(doc, {
       startY: startDate || endDate ? 42 : 36,
-      head: [["Paciente", "Médico", "Especialidade", "Data/Hora", "Status"]],
+      head: [["Paciente", "Médico", "Especialidade", "Plano de Saúde", "Data/Hora", "Status"]],
       body: tableData,
       styles: { fontSize: 8 },
       headStyles: { fillColor: [59, 130, 246] },
@@ -282,6 +302,24 @@ export default function AppointmentsPage() {
                 <Label>Observações</Label>
                 <Input {...register("notes")} placeholder="Opcional" />
               </div>
+              <div className="space-y-2">
+                <Label>Plano de Saúde</Label>
+                <select
+                  value={selectedHealthPlan}
+                  onChange={(e) => {
+                    setSelectedHealthPlan(e.target.value);
+                    setValue("healthPlanId", e.target.value || undefined);
+                  }}
+                  className="flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
+                >
+                  <option value="">Particular (sem convênio)</option>
+                  {healthPlans.map((hp) => (
+                    <option key={hp.id} value={hp.id}>
+                      {hp.name} ({hp.provider})
+                    </option>
+                  ))}
+                </select>
+              </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Salvando..." : editingAppointment ? "Atualizar Consulta" : "Agendar Consulta"}
               </Button>
@@ -336,6 +374,7 @@ export default function AppointmentsPage() {
                 <TableHead>Paciente</TableHead>
                 <TableHead>Médico</TableHead>
                 <TableHead>Especialidade</TableHead>
+                <TableHead>Plano de Saúde</TableHead>
                 <TableHead>Data/Hora</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
@@ -355,6 +394,13 @@ export default function AppointmentsPage() {
                   <TableCell className="font-medium">{a.patient.name}</TableCell>
                   <TableCell>{a.doctor.name}</TableCell>
                   <TableCell>{a.doctor.specialty.name}</TableCell>
+                  <TableCell>
+                    {a.healthPlan ? (
+                      <span className="text-sm">{a.healthPlan.name}</span>
+                    ) : (
+                      <span className="text-sm text-gray-400">Particular</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     {new Date(a.scheduledAt).toLocaleString("pt-BR")}
                   </TableCell>
@@ -391,7 +437,7 @@ export default function AppointmentsPage() {
                 return matchSearch && matchStart && matchEnd;
               }).length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500">
+                  <TableCell colSpan={7} className="text-center text-gray-500">
                     {(search || startDate || endDate) ? "Nenhum resultado encontrado" : "Nenhuma consulta agendada"}
                   </TableCell>
                 </TableRow>

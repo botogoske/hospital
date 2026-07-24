@@ -17,7 +17,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hospital System - Gestão Hospitalar",
+  title: "Hospital Greguito - Gestão Hospitalar",
   description: "Sistema de gestão hospitalar completo com interface moderna e intuitiva",
 };
 

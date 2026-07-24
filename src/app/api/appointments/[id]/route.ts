@@ -13,11 +13,12 @@ export async function PUT(
       data: {
         patientId: data.patientId,
         doctorId: data.doctorId,
+        healthPlanId: data.healthPlanId || null,
         scheduledAt: new Date(data.scheduledAt),
         notes: data.notes,
         status: data.status,
       },
-      include: { patient: true, doctor: { include: { specialty: true } } },
+      include: { patient: true, doctor: { include: { specialty: true } }, healthPlan: true },
     });
     return NextResponse.json(appointment);
   } catch (error: unknown) {

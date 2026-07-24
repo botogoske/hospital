@@ -65,8 +65,17 @@ export const surgeryScheduleSchema = z.object({
 export const appointmentSchema = z.object({
   patientId: z.string().min(1, "Paciente é obrigatório"),
   doctorId: z.string().min(1, "Médico é obrigatório"),
+  healthPlanId: z.string().optional(),
   scheduledAt: z.string().min(1, "Data e hora são obrigatórios"),
   notes: z.string().optional(),
+});
+
+export const healthPlanSchema = z.object({
+  name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
+  provider: z.string().min(2, "Operadora é obrigatória"),
+  registrationNumber: z.string().min(3, "Número de registro é obrigatório"),
+  coverageType: z.enum(["BASIC", "STANDARD", "PREMIUM"]),
+  isActive: z.boolean().optional(),
 });
 
 export const bedSchema = z.object({
@@ -125,3 +134,4 @@ export const admissionSchema = z.object({
 });
 
 export type AdmissionInput = z.infer<typeof admissionSchema>;
+export type HealthPlanInput = z.infer<typeof healthPlanSchema>;
