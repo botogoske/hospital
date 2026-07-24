@@ -7,36 +7,12 @@ import { specialtySchema, type SpecialtyInput } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { HiPlus, HiPencil, HiTrash } from "react-icons/hi";
 import { FaStethoscope } from "react-icons/fa";
 
-interface Specialty {
-  id: string;
-  name: string;
-  description?: string;
-  _count: { doctors: number };
-}
+interface Specialty { id: string; name: string; description?: string; _count: { doctors: number }; }
 
 export default function SpecialtiesPage() {
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
@@ -44,54 +20,22 @@ export default function SpecialtiesPage() {
   const [loading, setLoading] = useState(false);
   const [editingSpecialty, setEditingSpecialty] = useState<Specialty | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<SpecialtyInput>({
-    resolver: zodResolver(specialtySchema),
-  });
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<SpecialtyInput>({ resolver: zodResolver(specialtySchema) });
 
-  useEffect(() => {
-    fetchSpecialties();
-  }, []);
-
-  const fetchSpecialties = async () => {
-    const res = await fetch("/api/specialties");
-    if (res.ok) setSpecialties(await res.json());
-  };
+  useEffect(() => { fetchSpecialties(); }, []);
+  const fetchSpecialties = async () => { const res = await fetch("/api/specialties"); if (res.ok) setSpecialties(await res.json()); };
 
   const onSubmit = async (data: SpecialtyInput) => {
     setLoading(true);
     try {
-      const url = editingSpecialty
-        ? `/api/specialties/${editingSpecialty.id}`
-        : "/api/specialties";
+      const url = editingSpecialty ? `/api/specialties/${editingSpecialty.id}` : "/api/specialties";
       const method = editingSpecialty ? "PUT" : "POST";
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        setOpen(false);
-        reset();
-        setEditingSpecialty(null);
-        fetchSpecialties();
-      }
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (res.ok) { setOpen(false); reset(); setEditingSpecialty(null); fetchSpecialties(); }
+    } finally { setLoading(false); }
   };
 
-  const handleEdit = (specialty: Specialty) => {
-    setEditingSpecialty(specialty);
-    setValue("name", specialty.name);
-    setValue("description", specialty.description || "");
-    setOpen(true);
-  };
+  const handleEdit = (specialty: Specialty) => { setEditingSpecialty(specialty); setValue("name", specialty.name); setValue("description", specialty.description || ""); setOpen(true); };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir esta especialidade?")) return;
@@ -101,86 +45,64 @@ export default function SpecialtiesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Especialidades</h1>
-          <p className="text-gray-500">Gerencie as especialidades médicas</p>
+      <div className="border border-[#222222] bg-[#111111] p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white"><FaStethoscope className="h-5 w-5" /></div>
+            <div>
+              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">ESPECIALIDADES</h1>
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIE AS ESPECIALIDADES MEDICAS</p>
+            </div>
+          </div>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditingSpecialty(null); } }}>
+            <DialogTrigger render={<Button />}>
+              <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVA ESPECIALIDADE</span>
+            </DialogTrigger>
+            <DialogContent className="border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
+              <DialogHeader className="border-b border-[#222222] px-6 py-4">
+                <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">{editingSpecialty ? "[ EDITAR ] ESPECIALIDADE" : "[ NOVO ] CADASTRAR ESPECIALIDADE"}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+                <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NOME</Label><Input {...register("name")} placeholder="EX: CARDIOLOGIA" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.name && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.name.message}</p>}</div>
+                <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; DESCRICAO</Label><Input {...register("description")} placeholder="OPCIONAL" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" /></div>
+                <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>{loading ? "[ SALVANDO... ]" : editingSpecialty ? "[ ATUALIZAR ]" : "[ CADASTRAR ]"}</Button>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditingSpecialty(null); } }}>
-          <DialogTrigger render={<Button />}>
-            <HiPlus className="mr-2 h-4 w-4" />
-            Nova Especialidade
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editingSpecialty ? "Editar Especialidade" : "Cadastrar Especialidade"}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label>Nome</Label>
-                <Input {...register("name")} placeholder="Ex: Cardiologia" />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label>Descrição</Label>
-                <Input {...register("description")} placeholder="Opcional" />
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Salvando..." : editingSpecialty ? "Atualizar" : "Cadastrar"}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FaStethoscope className="h-5 w-5" />
-            Lista de Especialidades
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="border border-[#222222] bg-[#111111]">
+        <div className="border-b border-[#222222] px-6 py-4"><span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ LISTA DE ESPECIALIDADES ]</span></div>
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead>Médicos</TableHead>
-                <TableHead>Ações</TableHead>
+              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">NOME</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">DESCRICAO</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">MEDICOS</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {specialties.map((s) => (
-                <TableRow key={s.id}>
-                  <TableCell className="font-medium">{s.name}</TableCell>
-                  <TableCell>{s.description || "-"}</TableCell>
-                  <TableCell>{s._count.doctors}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon-sm" onClick={() => handleEdit(s)}>
-                        <HiPencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon-sm" onClick={() => handleDelete(s.id)}>
-                        <HiTrash className="h-4 w-4 text-red-500" />
-                      </Button>
+                <TableRow key={s.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
+                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{s.name}</TableCell>
+                  <TableCell className="font-mono text-[11px] uppercase text-[#777777]">{s.description || "—"}</TableCell>
+                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{s._count.doctors}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors" onClick={() => handleEdit(s)}><HiPencil className="h-3.5 w-3.5" /></button>
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(s.id)}><HiTrash className="h-3.5 w-3.5" /></button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              {specialties.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center text-gray-500">
-                    Nenhuma especialidade cadastrada
-                  </TableCell>
-                </TableRow>
-              )}
+              {specialties.length === 0 && <TableRow><TableCell colSpan={4} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">NENHUMA ESPECIALIDADE CADASTRADA</TableCell></TableRow>}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

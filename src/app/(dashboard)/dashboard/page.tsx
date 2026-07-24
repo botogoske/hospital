@@ -3,20 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
   HiUserGroup,
   HiCalendar,
   HiBeaker,
   HiPlus,
-  HiTrendingUp,
-  HiSparkles,
   HiClock,
   HiShieldCheck,
 } from "react-icons/hi";
@@ -51,7 +41,6 @@ export default function DashboardPage() {
       .then((res) => res.json())
       .then(setStats)
       .catch(() => {
-        // Fallback demo data if API server is offline
         setStats({
           totalPatients: 1248,
           totalDoctors: 42,
@@ -71,274 +60,253 @@ export default function DashboardPage() {
   const statCards = stats
     ? [
         {
-          title: "Pacientes Cadastrados",
+          title: "PACIENTES",
           value: stats.totalPatients.toLocaleString("pt-BR"),
-          description: "+14 este mês",
+          description: "+14 ESTE MES",
           icon: HiUserGroup,
-          gradient: "from-blue-600 to-indigo-600",
-          trend: "+12%",
-          isPositive: true,
+          accent: true,
         },
         {
-          title: "Corpo Médico",
+          title: "CORPO MEDICO",
           value: stats.totalDoctors.toLocaleString("pt-BR"),
-          description: "Especialistas ativos",
+          description: "ESPECIALISTAS ATIVOS",
           icon: FaUserMd,
-          gradient: "from-emerald-500 to-teal-600",
-          trend: "Ativos",
-          isPositive: true,
+          accent: false,
         },
         {
-          title: "Consultas Hoje",
+          title: "CONSULTAS HOJE",
           value: stats.todayAppointments.toLocaleString("pt-BR"),
-          description: "Agendamentos confirmados",
+          description: "AGENDAMENTOS CONFIRMADOS",
           icon: HiCalendar,
-          gradient: "from-purple-600 to-violet-600",
-          trend: "85% concl.",
-          isPositive: true,
+          accent: false,
         },
         {
-          title: "Cirurgias da Semana",
+          title: "CIRURGIAS SEMANA",
           value: stats.weekSurgeries.toLocaleString("pt-BR"),
-          description: "Centro Cirúrgico",
+          description: "CENTRO CIRURGICO",
           icon: FaProcedures,
-          gradient: "from-rose-500 to-red-600",
-          trend: "4 hoje",
-          isPositive: true,
+          accent: false,
         },
         {
-          title: "Leitos Disponíveis",
+          title: "LEITOS DISPONIVEIS",
           value: `${stats.availableBeds}/${stats.totalBeds}`,
-          description: "Taxa de ocupação: 70%",
+          description: "OCUPACAO: 70%",
           icon: FaBed,
-          gradient: "from-amber-500 to-orange-600",
-          trend: "Disponível",
-          isPositive: true,
+          accent: false,
         },
         {
-          title: "Internamentos Ativos",
+          title: "INTERNAMENTOS",
           value: stats.totalAdmissions.toLocaleString("pt-BR"),
-          description: "Pacientes em leito",
+          description: "PACIENTES EM LEITO",
           icon: FaHospital,
-          gradient: "from-cyan-500 to-blue-600",
-          trend: "Estável",
-          isPositive: true,
+          accent: false,
         },
         {
-          title: "Medicamentos",
+          title: "MEDICAMENTOS",
           value: stats.totalMedications.toLocaleString("pt-BR"),
-          description: "Itens em estoque",
+          description: "ITENS EM ESTOQUE",
           icon: HiBeaker,
-          gradient: "from-indigo-500 to-purple-600",
-          trend: "OK",
-          isPositive: true,
+          accent: false,
         },
         {
-          title: "Prontuários Eletrônicos",
+          title: "PRONTUARIOS",
           value: stats.totalMedicalRecords.toLocaleString("pt-BR"),
-          description: "Histórico completo",
+          description: "HISTORICO COMPLETO",
           icon: FaNotesMedical,
-          gradient: "from-pink-500 to-rose-600",
-          trend: "+32 hoje",
-          isPositive: true,
+          accent: false,
         },
         {
-          title: "Planos de Saúde",
+          title: "PLANOS DE SAUDE",
           value: stats.totalHealthPlans.toLocaleString("pt-BR"),
-          description: "Convênios ativos",
+          description: "CONVENIOS ATIVOS",
           icon: HiShieldCheck,
-          gradient: "from-teal-500 to-cyan-600",
-          trend: "Ativos",
-          isPositive: true,
+          accent: false,
         },
       ]
     : [];
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-6 pb-8">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 p-6 md:p-8 text-white shadow-xl">
-        <div className="absolute -right-10 -top-10 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="absolute right-40 -bottom-10 h-48 w-48 rounded-full bg-teal-500/10 blur-2xl" />
+      <div className="border border-[#222222] bg-[#111111] relative">
+        {/* Red accent bar */}
+        <div className="absolute top-0 left-0 h-1 w-full bg-[#E61919]" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 p-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-300 backdrop-blur-md">
-              <HiSparkles className="h-3.5 w-3.5 text-amber-400" />
-              <span>Painel de Controle Hospitalar</span>
+            <div className="inline-flex items-center gap-2 border border-[#333333] bg-[#0D0D0D] px-3 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+              <span className="text-[#E61919]">///</span>
+              <span>PAINEL DE CONTROLE HOSPITALAR</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              Bem-vindo ao Hospital Greguito
+            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">
+              BEM-VINDO AO<br />
+              <span className="text-[#E61919]">HOSPITAL GREGUITO</span>
             </h1>
-            <p className="max-w-2xl text-sm text-slate-300">
-              Visão consolidada em tempo real da ocupação de leitos, cirurgias agendadas e atendimento a pacientes.
+            <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-[#555555] max-w-xl">
+              VISAO CONSOLIDADA EM TEMPO REAL DA OCUPACAO DE LEITOS, CIRURGIAS AGENDADAS E ATENDIMENTO A PACIENTES.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Link href="/consultas">
-              <Button className="rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-lg shadow-blue-600/30 gap-2">
-                <HiPlus className="h-4 w-4" />
-                Nova Consulta
-              </Button>
+          <div className="flex flex-col gap-2">
+            <Link href="/consultas" className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515] transition-colors">
+              <HiPlus className="h-3.5 w-3.5" />
+              NOVA CONSULTA
             </Link>
-            <Link href="/pacientes">
-              <Button variant="outline" className="rounded-xl border-slate-700 bg-slate-800/60 text-slate-200 hover:bg-slate-800 hover:text-white backdrop-blur-md gap-2">
-                <HiUserGroup className="h-4 w-4" />
-                Novo Paciente
-              </Button>
+            <Link href="/pacientes" className="flex items-center gap-2 border border-[#333333] bg-[#1A1A1A] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:border-[#555555] transition-colors">
+              <HiUserGroup className="h-3.5 w-3.5" />
+              NOVO PACIENTE
             </Link>
           </div>
         </div>
+
+        {/* Metadata bar */}
+        <div className="border-t border-[#222222] bg-[#0A0A0A] px-6 py-2 flex items-center justify-between">
+          <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#333333]">
+            REV 2.6 &middot; UNIT / D-01
+          </span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#333333]">
+            {new Date().toLocaleDateString("pt-BR")} {new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+          </span>
+        </div>
       </div>
 
-      {/* Grid of Modern Stat Cards */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Grid of Stat Cards */}
+      <div className="grid gap-px bg-[#222222] border border-[#222222]">
         {statCards.map((stat) => (
-          <Card
+          <div
             key={stat.title}
-            className="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900"
+            className="bg-[#111111] p-5 group hover:bg-[#141414] transition-colors"
           >
-            <div className="flex items-center justify-between">
-              <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${stat.gradient} text-white shadow-md transition-transform group-hover:scale-110`}>
-                <stat.icon className="h-6 w-6" />
+            <div className="flex items-center justify-between mb-4">
+              <div className={`flex h-8 w-8 items-center justify-center ${stat.accent ? "bg-[#E61919] text-white" : "bg-[#1A1A1A] text-[#777777] border border-[#333333]"} transition-colors group-hover:text-[#EAEAEA]`}>
+                <stat.icon className="h-4 w-4" />
               </div>
-              <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                <HiTrendingUp className="h-3 w-3 text-emerald-500" />
-                {stat.trend}
+              <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-[#444444]">
+                {stat.accent ? ">>> ACTIVE" : "[ OK ]"}
               </span>
             </div>
-
-            <div className="mt-4 space-y-1">
-              <h3 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <div className="space-y-1">
+              <p className="font-mono text-2xl font-bold tracking-tight text-[#EAEAEA]">
                 {stat.value}
-              </h3>
-              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+              </p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555]">
                 {stat.title}
               </p>
-              <p className="text-xs text-slate-400">{stat.description}</p>
+              <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#333333]">
+                {stat.description}
+              </p>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
 
       {/* Shortcuts & Quick Actions Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-px bg-[#222222] border border-[#222222] lg:grid-cols-3">
         {/* Left Column: Quick Actions */}
-        <Card className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900 lg:col-span-2">
-          <CardHeader className="px-0 pt-0 pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <FaClipboardList className="h-5 w-5 text-blue-600" />
-                  Atalhos Rápidos de Operação
-                </CardTitle>
-                <CardDescription className="text-xs text-slate-500">
-                  Acesse com um clique os fluxos mais utilizados da sua rotina
-                </CardDescription>
-              </div>
+        <div className="bg-[#111111] p-6 lg:col-span-2">
+          <div className="border-b border-[#222222] pb-4 mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FaClipboardList className="h-4 w-4 text-[#E61919]" />
+              <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#EAEAEA]">
+                [ ATALHOS RAPIDOS DE OPERACAO ]
+              </span>
             </div>
-          </CardHeader>
-          <CardContent className="px-0 grid gap-4 sm:grid-cols-2">
-            <Link href="/consultas" className="group flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-blue-500/30 hover:bg-blue-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <HiCalendar className="h-5 w-5" />
+          </div>
+          <div className="grid gap-px bg-[#222222] sm:grid-cols-2">
+            <Link href="/consultas" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
+                <HiCalendar className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Agendar Consulta</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Marcar nova consulta ambulatorial ou retorno</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">AGENDAR CONSULTA</h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">MARCAR NOVA CONSULTA AMBULATORIAL OU RETORNO</p>
               </div>
             </Link>
 
-            <Link href="/internamentos" className="group flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-emerald-500/30 hover:bg-emerald-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                <FaHospital className="h-5 w-5" />
+            <Link href="/internamentos" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#4AF626] group-hover:text-black group-hover:border-[#4AF626] transition-colors">
+                <FaHospital className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Registrar Internamento</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Dar entrada de paciente em leito hospitalar</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">REGISTRAR INTERNAMENTO</h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">DAR ENTRADA DE PACIENTE EM LEITO HOSPITALAR</p>
               </div>
             </Link>
 
-            <Link href="/prontuarios" className="group flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-purple-500/30 hover:bg-purple-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                <FaNotesMedical className="h-5 w-5" />
+            <Link href="/prontuarios" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
+                <FaNotesMedical className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Prontuário Eletrônico</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Consultar histórico médico e evoluções</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">PRONTUARIO ELETRONICO</h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">CONSULTAR HISTORICO MEDICO E EVOLUCOES</p>
               </div>
             </Link>
 
-            <Link href="/cirurgias" className="group flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-rose-500/30 hover:bg-rose-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-500/10 text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-colors">
-                <FaProcedures className="h-5 w-5" />
+            <Link href="/cirurgias" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
+                <FaProcedures className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Mapa Cirúrgico</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Visualizar horários de salas de cirurgia</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">MAPA CIRURGICO</h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">VISUALIZAR HORARIOS DE SALAS DE CIRURGIA</p>
               </div>
             </Link>
 
-            <Link href="/planos-de-saude" className="group flex items-start gap-4 rounded-xl border border-slate-100 bg-slate-50/60 p-4 transition-all hover:border-teal-500/30 hover:bg-teal-50/40 dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                <HiShieldCheck className="h-5 w-5" />
+            <Link href="/planos-de-saude" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#4AF626] group-hover:text-black group-hover:border-[#4AF626] transition-colors">
+                <HiShieldCheck className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Planos de Saúde</h4>
-                <p className="text-xs text-slate-500 mt-0.5">Gerenciar convênios e coberturas</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">PLANOS DE SAUDE</h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">GERENCIAR CONVENIOS E COBERTURAS</p>
               </div>
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Right Column: Live System Activity */}
-        <Card className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <CardHeader className="px-0 pt-0 pb-4">
-            <CardTitle className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <HiClock className="h-5 w-5 text-indigo-600" />
-              Atividades Recentes
-            </CardTitle>
-            <CardDescription className="text-xs text-slate-500">
-              Últimas atualizações no sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-0 space-y-4">
-            <div className="flex gap-3 items-start text-xs border-b border-slate-100 pb-3 dark:border-slate-800">
-              <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500 shrink-0" />
+        <div className="bg-[#111111] p-6">
+          <div className="border-b border-[#222222] pb-4 mb-4 flex items-center gap-2">
+            <HiClock className="h-4 w-4 text-[#777777]" />
+            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#EAEAEA]">
+              [ ATIVIDADES RECENTES ]
+            </span>
+          </div>
+          <div className="space-y-0">
+            <div className="flex gap-3 items-start border-b border-[#1A1A1A] py-3">
+              <div className="mt-1 h-1.5 w-1.5 bg-[#E61919] shrink-0" />
               <div>
-                <p className="font-semibold text-slate-800 dark:text-slate-200">Paciente João Silva internado</p>
-                <p className="text-slate-400 text-[11px]">Leito 204 • UTI Geral • Há 15 min</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">PACIENTE JOAO SILVA INTERNADO</p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">LEITO 204 &middot; UTI GERAL &middot; HA 15 MIN</p>
               </div>
             </div>
 
-            <div className="flex gap-3 items-start text-xs border-b border-slate-100 pb-3 dark:border-slate-800">
-              <div className="mt-0.5 h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+            <div className="flex gap-3 items-start border-b border-[#1A1A1A] py-3">
+              <div className="mt-1 h-1.5 w-1.5 bg-[#4AF626] shrink-0" />
               <div>
-                <p className="font-semibold text-slate-800 dark:text-slate-200">Cirurgia Ortopédica Finalizada</p>
-                <p className="text-slate-400 text-[11px]">Dra. Maria Santos • Sala 02 • Há 42 min</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">CIRURGIA ORTOPEDICA FINALIZADA</p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">DRA. MARIA SANTOS &middot; SALA 02 &middot; HA 42 MIN</p>
               </div>
             </div>
 
-            <div className="flex gap-3 items-start text-xs">
-              <div className="mt-0.5 h-2 w-2 rounded-full bg-purple-500 shrink-0" />
+            <div className="flex gap-3 items-start py-3">
+              <div className="mt-1 h-1.5 w-1.5 bg-[#777777] shrink-0" />
               <div>
-                <p className="font-semibold text-slate-800 dark:text-slate-200">Alta Médica Concedida</p>
-                <p className="text-slate-400 text-[11px]">Paciente Ana Costa • Leito 108 • Há 1 hora</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">ALTA MEDICA CONCEDIDA</p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">PACIENTE ANA COSTA &middot; LEITO 108 &middot; HA 1 HORA</p>
               </div>
             </div>
 
-            <div className="mt-4 pt-2">
-              <div className="rounded-xl bg-slate-50 p-3 text-xs flex items-center justify-between text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                <span className="flex items-center gap-1.5 font-medium">
-                  <HiShieldCheck className="h-4 w-4 text-blue-500" />
-                  Backup Automático Realizado
-                </span>
-                <span className="font-bold text-slate-400">08:00</span>
-              </div>
+            <div className="mt-4 border border-[#222222] bg-[#0D0D0D] p-3 flex items-center justify-between">
+              <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777]">
+                <HiShieldCheck className="h-3.5 w-3.5 text-[#4AF626]" />
+                BACKUP AUTOMATICO
+              </span>
+              <span className="font-mono text-[10px] font-bold text-[#555555]">08:00</span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

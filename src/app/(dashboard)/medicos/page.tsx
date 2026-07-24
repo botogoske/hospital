@@ -8,12 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -38,21 +32,8 @@ import {
 import { HiPlus, HiPencil, HiTrash } from "react-icons/hi";
 import { FaUserMd } from "react-icons/fa";
 
-interface Doctor {
-  id: string;
-  name: string;
-  cpf: string;
-  crm: string;
-  phone: string;
-  email: string;
-  specialtyId: string;
-  specialty: { id: string; name: string };
-}
-
-interface Specialty {
-  id: string;
-  name: string;
-}
+interface Doctor { id: string; name: string; cpf: string; crm: string; phone: string; email: string; specialtyId: string; specialty: { id: string; name: string }; }
+interface Specialty { id: string; name: string; }
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -62,208 +43,116 @@ export default function DoctorsPage() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<DoctorInput>({
-    resolver: zodResolver(doctorSchema),
-  });
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<DoctorInput>({ resolver: zodResolver(doctorSchema) });
 
-  useEffect(() => {
-    fetchDoctors();
-    fetchSpecialties();
-  }, []);
+  useEffect(() => { fetchDoctors(); fetchSpecialties(); }, []);
 
-  const fetchDoctors = async () => {
-    const res = await fetch("/api/doctors");
-    if (res.ok) setDoctors(await res.json());
-  };
-
-  const fetchSpecialties = async () => {
-    const res = await fetch("/api/specialties");
-    if (res.ok) setSpecialties(await res.json());
-  };
+  const fetchDoctors = async () => { const res = await fetch("/api/doctors"); if (res.ok) setDoctors(await res.json()); };
+  const fetchSpecialties = async () => { const res = await fetch("/api/specialties"); if (res.ok) setSpecialties(await res.json()); };
 
   const onSubmit = async (data: DoctorInput) => {
     setLoading(true);
     try {
-      const url = editingDoctor
-        ? `/api/doctors/${editingDoctor.id}`
-        : "/api/doctors";
+      const url = editingDoctor ? `/api/doctors/${editingDoctor.id}` : "/api/doctors";
       const method = editingDoctor ? "PUT" : "POST";
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        setOpen(false);
-        reset();
-        setSelectedSpecialty("");
-        setEditingDoctor(null);
-        fetchDoctors();
-      }
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (res.ok) { setOpen(false); reset(); setSelectedSpecialty(""); setEditingDoctor(null); fetchDoctors(); }
+    } finally { setLoading(false); }
   };
 
   const handleEdit = (doctor: Doctor) => {
     setEditingDoctor(doctor);
     setSelectedSpecialty(doctor.specialtyId);
-    setValue("name", doctor.name);
-    setValue("cpf", doctor.cpf);
-    setValue("crm", doctor.crm);
-    setValue("phone", doctor.phone);
-    setValue("email", doctor.email);
-    setValue("specialtyId", doctor.specialtyId);
+    setValue("name", doctor.name); setValue("cpf", doctor.cpf); setValue("crm", doctor.crm);
+    setValue("phone", doctor.phone); setValue("email", doctor.email); setValue("specialtyId", doctor.specialtyId);
     setOpen(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este médico?")) return;
+    if (!confirm("Tem certeza que deseja excluir este medico?")) return;
     const res = await fetch(`/api/doctors/${id}`, { method: "DELETE" });
     if (res.ok) fetchDoctors();
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Médicos</h1>
-          <p className="text-gray-500">Gerencie os médicos do hospital</p>
+      <div className="border border-[#222222] bg-[#111111] p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white"><FaUserMd className="h-5 w-5" /></div>
+            <div>
+              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">MEDICOS</h1>
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIE OS MEDICOS DO HOSPITAL</p>
+            </div>
+          </div>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setSelectedSpecialty(""); setEditingDoctor(null); } }}>
+            <DialogTrigger render={<Button />}>
+              <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVO MEDICO</span>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
+              <DialogHeader className="border-b border-[#222222] px-6 py-4">
+                <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">{editingDoctor ? "[ EDITAR ] MEDICO" : "[ NOVO ] CADASTRAR MEDICO"}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NOME</Label><Input {...register("name")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.name && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.name.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CPF</Label><Input {...register("cpf")} placeholder="000.000.000-00" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.cpf && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cpf.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CRM</Label><Input {...register("crm")} placeholder="CRM-00000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.crm && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.crm.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TELEFONE</Label><Input {...register("phone")} placeholder="(00) 00000-0000" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.phone && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.phone.message}</p>}</div>
+                  <div className="col-span-2 space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; EMAIL</Label><Input type="email" {...register("email")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.email && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.email.message}</p>}</div>
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ESPECIALIDADE</Label>
+                    <Select value={selectedSpecialty} onValueChange={(value) => { if (!value) return; setSelectedSpecialty(value); setValue("specialtyId", value); }} items={specialties.map((s) => ({ value: s.id, label: s.name }))}>
+                      <SelectTrigger className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919]"><SelectValue placeholder="SELECIONE..." /></SelectTrigger>
+                      <SelectContent className="rounded-none border-[#333333] bg-[#111111]">{specialties.map((s) => <SelectItem key={s.id} value={s.id} className="font-mono text-xs">{s.name}</SelectItem>)}</SelectContent>
+                    </Select>
+                    {errors.specialtyId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.specialtyId.message}</p>}
+                  </div>
+                </div>
+                <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>
+                  {loading ? "[ SALVANDO... ]" : editingDoctor ? "[ ATUALIZAR ]" : "[ CADASTRAR ]"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setSelectedSpecialty(""); setEditingDoctor(null); } }}>
-          <DialogTrigger render={<Button />}>
-            <HiPlus className="mr-2 h-4 w-4" />
-            Novo Médico
-          </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingDoctor ? "Editar Médico" : "Cadastrar Médico"}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>Nome</Label>
-                  <Input {...register("name")} />
-                  {errors.name && (
-                    <p className="text-sm text-red-500">{errors.name.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>CPF</Label>
-                  <Input {...register("cpf")} placeholder="000.000.000-00" />
-                  {errors.cpf && (
-                    <p className="text-sm text-red-500">{errors.cpf.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>CRM</Label>
-                  <Input {...register("crm")} placeholder="CRM-00000" />
-                  {errors.crm && (
-                    <p className="text-sm text-red-500">{errors.crm.message}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>Telefone</Label>
-                  <Input {...register("phone")} placeholder="(00) 00000-0000" />
-                  {errors.phone && (
-                    <p className="text-sm text-red-500">{errors.phone.message}</p>
-                  )}
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>Email</Label>
-                  <Input type="email" {...register("email")} />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">{errors.email.message}</p>
-                  )}
-                </div>
-                <div className="col-span-2 space-y-2">
-                  <Label>Especialidade</Label>
-                  <Select
-                    value={selectedSpecialty}
-                    onValueChange={(value) => { if (!value) return;
-                      setSelectedSpecialty(value);
-                      setValue("specialtyId", value);
-                    }}
-                    items={specialties.map((s) => ({ value: s.id, label: s.name }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {specialties.map((s) => (
-                        <SelectItem key={s.id} value={s.id}>
-                          {s.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.specialtyId && (
-                    <p className="text-sm text-red-500">{errors.specialtyId.message}</p>
-                  )}
-                </div>
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Salvando..." : editingDoctor ? "Atualizar" : "Cadastrar"}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FaUserMd className="h-5 w-5" />
-            Lista de Médicos
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="border border-[#222222] bg-[#111111]">
+        <div className="border-b border-[#222222] px-6 py-4">
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ LISTA DE MEDICOS ]</span>
+        </div>
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>CRM</TableHead>
-                <TableHead>Telefone</TableHead>
-                <TableHead>Especialidade</TableHead>
-                <TableHead>Ações</TableHead>
+              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">NOME</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">CRM</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">TELEFONE</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">ESPECIALIDADE</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {doctors.map((d) => (
-                <TableRow key={d.id}>
-                  <TableCell className="font-medium">{d.name}</TableCell>
-                  <TableCell>{d.crm}</TableCell>
-                  <TableCell>{d.phone}</TableCell>
-                  <TableCell>{d.specialty.name}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon-sm" onClick={() => handleEdit(d)}>
-                        <HiPencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon-sm" onClick={() => handleDelete(d.id)}>
-                        <HiTrash className="h-4 w-4 text-red-500" />
-                      </Button>
+                <TableRow key={d.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
+                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{d.name}</TableCell>
+                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{d.crm}</TableCell>
+                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{d.phone}</TableCell>
+                  <TableCell className="font-mono text-[11px] uppercase text-[#777777]">{d.specialty.name}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors" onClick={() => handleEdit(d)}><HiPencil className="h-3.5 w-3.5" /></button>
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(d.id)}><HiTrash className="h-3.5 w-3.5" /></button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              {doctors.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-500">
-                    Nenhum médico cadastrado
-                  </TableCell>
-                </TableRow>
-              )}
+              {doctors.length === 0 && <TableRow><TableCell colSpan={5} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">NENHUM MEDICO CADASTRADO</TableCell></TableRow>}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

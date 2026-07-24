@@ -8,12 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -28,27 +22,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { HiPlus, HiCalendar, HiSearch, HiPencil, HiTrash, HiDownload } from "react-icons/hi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-interface Patient {
-  id: string;
-  name: string;
-}
-
-interface Doctor {
-  id: string;
-  name: string;
-}
-
-interface HealthPlan {
-  id: string;
-  name: string;
-  provider: string;
-}
-
+interface Patient { id: string; name: string; }
+interface Doctor { id: string; name: string; }
+interface HealthPlan { id: string; name: string; provider: string; }
 interface Appointment {
   id: string;
   patientId: string;
@@ -62,20 +42,20 @@ interface Appointment {
   healthPlan?: { name: string; provider: string } | null;
 }
 
-const statusColors: Record<string, string> = {
-  SCHEDULED: "bg-blue-100 text-blue-800",
-  IN_PROGRESS: "bg-yellow-100 text-yellow-800",
-  COMPLETED: "bg-green-100 text-green-800",
-  CANCELLED: "bg-red-100 text-red-800",
-  NO_SHOW: "bg-gray-100 text-gray-800",
+const statusLabels: Record<string, string> = {
+  SCHEDULED: "AGENDADA",
+  IN_PROGRESS: "EM ANDAMENTO",
+  COMPLETED: "CONCLUIDA",
+  CANCELLED: "CANCELADA",
+  NO_SHOW: "NAO COMPARECEU",
 };
 
-const statusLabels: Record<string, string> = {
-  SCHEDULED: "Agendada",
-  IN_PROGRESS: "Em Andamento",
-  COMPLETED: "Concluída",
-  CANCELLED: "Cancelada",
-  NO_SHOW: "Não Compareceu",
+const statusBorders: Record<string, string> = {
+  SCHEDULED: "border-l-[#E61919]",
+  IN_PROGRESS: "border-l-[#E61919]",
+  COMPLETED: "border-l-[#4AF626]",
+  CANCELLED: "border-l-[#555555]",
+  NO_SHOW: "border-l-[#333333]",
 };
 
 export default function AppointmentsPage() {
@@ -93,13 +73,7 @@ export default function AppointmentsPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<AppointmentInput>({
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<AppointmentInput>({
     resolver: zodResolver(appointmentSchema),
   });
 
@@ -110,51 +84,19 @@ export default function AppointmentsPage() {
     fetchHealthPlans();
   }, []);
 
-  const fetchAppointments = async () => {
-    const res = await fetch("/api/appointments");
-    if (res.ok) setAppointments(await res.json());
-  };
-
-  const fetchPatients = async () => {
-    const res = await fetch("/api/patients");
-    if (res.ok) setPatients(await res.json());
-  };
-
-  const fetchDoctors = async () => {
-    const res = await fetch("/api/doctors");
-    if (res.ok) setDoctors(await res.json());
-  };
-
-  const fetchHealthPlans = async () => {
-    const res = await fetch("/api/health-plans");
-    if (res.ok) setHealthPlans(await res.json());
-  };
+  const fetchAppointments = async () => { const res = await fetch("/api/appointments"); if (res.ok) setAppointments(await res.json()); };
+  const fetchPatients = async () => { const res = await fetch("/api/patients"); if (res.ok) setPatients(await res.json()); };
+  const fetchDoctors = async () => { const res = await fetch("/api/doctors"); if (res.ok) setDoctors(await res.json()); };
+  const fetchHealthPlans = async () => { const res = await fetch("/api/health-plans"); if (res.ok) setHealthPlans(await res.json()); };
 
   const onSubmit = async (data: AppointmentInput) => {
     setLoading(true);
     try {
-      const url = editingAppointment
-        ? `/api/appointments/${editingAppointment.id}`
-        : "/api/appointments";
+      const url = editingAppointment ? `/api/appointments/${editingAppointment.id}` : "/api/appointments";
       const method = editingAppointment ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (res.ok) {
-        setOpen(false);
-        reset();
-        setSelectedPatient("");
-        setSelectedDoctor("");
-        setSelectedHealthPlan("");
-        setEditingAppointment(null);
-        fetchAppointments();
-      }
-    } finally {
-      setLoading(false);
-    }
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (res.ok) { setOpen(false); reset(); setSelectedPatient(""); setSelectedDoctor(""); setSelectedHealthPlan(""); setEditingAppointment(null); fetchAppointments(); }
+    } finally { setLoading(false); }
   };
 
   const handleEdit = (appointment: Appointment) => {
@@ -172,280 +114,202 @@ export default function AppointmentsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir esta consulta?")) return;
-
-    try {
-      const res = await fetch(`/api/appointments/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        fetchAppointments();
-      }
-    } catch (error) {
-      console.error("Erro ao excluir:", error);
-    }
+    const res = await fetch(`/api/appointments/${id}`, { method: "DELETE" });
+    if (res.ok) fetchAppointments();
   };
 
   const handleExportPDF = () => {
-    const filteredAppointments = appointments.filter((a) => {
+    const filtered = appointments.filter((a) => {
       const matchSearch = a.patient.name.toLowerCase().includes(search.toLowerCase());
-      const appointmentDate = new Date(a.scheduledAt);
-      const matchStart = !startDate || appointmentDate >= new Date(startDate);
-      const matchEnd = !endDate || appointmentDate <= new Date(endDate + "T23:59:59");
+      const d = new Date(a.scheduledAt);
+      const matchStart = !startDate || d >= new Date(startDate);
+      const matchEnd = !endDate || d <= new Date(endDate + "T23:59:59");
       return matchSearch && matchStart && matchEnd;
     });
-
     const doc = new jsPDF();
-
     doc.setFontSize(18);
-    doc.text("Relatório de Consultas", 14, 22);
-
+    doc.text("Relatorio de Consultas", 14, 22);
     doc.setFontSize(10);
     doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")}`, 14, 30);
-
-    if (startDate || endDate) {
-      const periodText = `Período: ${startDate || "Início"} até ${endDate || "Fim"}`;
-      doc.text(periodText, 14, 36);
-    }
-
-    const tableData = filteredAppointments.map((a) => [
-      a.patient.name,
-      a.doctor.name,
-      a.doctor.specialty.name,
+    const tableData = filtered.map((a) => [
+      a.patient.name, a.doctor.name, a.doctor.specialty.name,
       a.healthPlan ? `${a.healthPlan.name} (${a.healthPlan.provider})` : "Particular",
       new Date(a.scheduledAt).toLocaleString("pt-BR"),
       statusLabels[a.status] || a.status,
     ]);
-
     autoTable(doc, {
-      startY: startDate || endDate ? 42 : 36,
-      head: [["Paciente", "Médico", "Especialidade", "Plano de Saúde", "Data/Hora", "Status"]],
+      startY: 36,
+      head: [["Paciente", "Medico", "Especialidade", "Plano", "Data/Hora", "Status"]],
       body: tableData,
       styles: { fontSize: 8 },
-      headStyles: { fillColor: [59, 130, 246] },
+      headStyles: { fillColor: [230, 25, 25] },
     });
-
     doc.save("consultas.pdf");
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Consultas</h1>
-          <p className="text-gray-500">Agendamento de consultas médicas</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleExportPDF}>
-            <HiDownload className="mr-2 h-4 w-4" />
-            Exportar PDF
-          </Button>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger render={<Button />}>
-              <HiPlus className="mr-2 h-4 w-4" />
-              Nova Consulta
-            </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>{editingAppointment ? "Editar Consulta" : "Agendar Consulta"}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label>Paciente</Label>
-                <select
-                  value={selectedPatient}
-                  onChange={(e) => {
-                    setSelectedPatient(e.target.value);
-                    setValue("patientId", e.target.value);
-                  }}
-                  className="flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
-                >
-                  <option value="">Selecione o paciente...</option>
-                  {patients.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.patientId && (
-                  <p className="text-sm text-red-500">{errors.patientId.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label>Médico</Label>
-                <select
-                  value={selectedDoctor}
-                  onChange={(e) => {
-                    setSelectedDoctor(e.target.value);
-                    setValue("doctorId", e.target.value);
-                  }}
-                  className="flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
-                >
-                  <option value="">Selecione o médico...</option>
-                  {doctors.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.doctorId && (
-                  <p className="text-sm text-red-500">{errors.doctorId.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label>Data e Hora</Label>
-                <Input type="datetime-local" {...register("scheduledAt")} />
-                {errors.scheduledAt && (
-                  <p className="text-sm text-red-500">{errors.scheduledAt.message}</p>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label>Observações</Label>
-                <Input {...register("notes")} placeholder="Opcional" />
-              </div>
-              <div className="space-y-2">
-                <Label>Plano de Saúde</Label>
-                <select
-                  value={selectedHealthPlan}
-                  onChange={(e) => {
-                    setSelectedHealthPlan(e.target.value);
-                    setValue("healthPlanId", e.target.value || undefined);
-                  }}
-                  className="flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/50"
-                >
-                  <option value="">Particular (sem convênio)</option>
-                  {healthPlans.map((hp) => (
-                    <option key={hp.id} value={hp.id}>
-                      {hp.name} ({hp.provider})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Salvando..." : editingAppointment ? "Atualizar Consulta" : "Agendar Consulta"}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+      {/* Header */}
+      <div className="border border-[#222222] bg-[#111111] p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white">
+              <HiCalendar className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">CONSULTAS</h1>
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">AGENDAMENTO DE CONSULTAS MEDICAS</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleExportPDF} className="flex items-center gap-2 border border-[#333333] bg-[#1A1A1A] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:border-[#555555] transition-colors">
+              <HiDownload className="h-3.5 w-3.5" />
+              EXPORTAR PDF
+            </button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger render={<Button />}>
+                <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]">
+                  <HiPlus className="h-3.5 w-3.5" />
+                  NOVA CONSULTA
+                </span>
+              </DialogTrigger>
+              <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
+                <DialogHeader className="border-b border-[#222222] px-6 py-4">
+                  <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">
+                    {editingAppointment ? "[ EDITAR ] CONSULTA" : "[ NOVO ] AGENDAR CONSULTA"}
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; PACIENTE</Label>
+                    <select value={selectedPatient} onChange={(e) => { setSelectedPatient(e.target.value); setValue("patientId", e.target.value); }}
+                      className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                      <option value="">SELECIONE O PACIENTE...</option>
+                      {patients.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    </select>
+                    {errors.patientId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.patientId.message}</p>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; MEDICO</Label>
+                    <select value={selectedDoctor} onChange={(e) => { setSelectedDoctor(e.target.value); setValue("doctorId", e.target.value); }}
+                      className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                      <option value="">SELECIONE O MEDICO...</option>
+                      {doctors.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+                    </select>
+                    {errors.doctorId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.doctorId.message}</p>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; DATA E HORA</Label>
+                    <Input type="datetime-local" {...register("scheduledAt")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
+                    {errors.scheduledAt && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.scheduledAt.message}</p>}
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; OBSERVACOES</Label>
+                    <Input {...register("notes")} placeholder="OPCIONAL" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; PLANO DE SAUDE</Label>
+                    <select value={selectedHealthPlan} onChange={(e) => { setSelectedHealthPlan(e.target.value); setValue("healthPlanId", e.target.value || undefined); }}
+                      className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                      <option value="">PARTICULAR (SEM CONVENIO)</option>
+                      {healthPlans.map((hp) => <option key={hp.id} value={hp.id}>{hp.name} ({hp.provider})</option>)}
+                    </select>
+                  </div>
+                  <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>
+                    {loading ? "[ SALVANDO... ]" : editingAppointment ? "[ ATUALIZAR CONSULTA ]" : "[ AGENDAR CONSULTA ]"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <HiCalendar className="h-5 w-5" />
-            Consultas Agendadas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4 flex flex-col gap-4 sm:flex-row">
+      {/* Table */}
+      <div className="border border-[#222222] bg-[#111111]">
+        <div className="border-b border-[#222222] px-6 py-4 space-y-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ CONSULTAS AGENDADAS ]</span>
+          <div className="flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
-              <HiSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input
-                placeholder="Buscar por nome do paciente..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
-              />
+              <HiSearch className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#555555]" />
+              <input placeholder="BUSCAR POR NOME DO PACIENTE..." value={search} onChange={(e) => setSearch(e.target.value)}
+                className="w-full border border-[#222222] bg-[#0D0D0D] py-1.5 pl-9 pr-3 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA] placeholder:text-[#444444] focus:border-[#E61919] focus:outline-none rounded-none" />
             </div>
             <div className="flex gap-2">
               <div className="flex items-center gap-2">
-                <Label className="whitespace-nowrap">De:</Label>
-                <Input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-40"
-                />
+                <Label className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555]">DE:</Label>
+                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-36 rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-[10px] text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
               </div>
               <div className="flex items-center gap-2">
-                <Label className="whitespace-nowrap">Até:</Label>
-                <Input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-40"
-                />
+                <Label className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555]">ATE:</Label>
+                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-36 rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-[10px] text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
               </div>
             </div>
           </div>
+        </div>
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Paciente</TableHead>
-                <TableHead>Médico</TableHead>
-                <TableHead>Especialidade</TableHead>
-                <TableHead>Plano de Saúde</TableHead>
-                <TableHead>Data/Hora</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Ações</TableHead>
+              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PACIENTE</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">MEDICO</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">ESPECIALIDADE</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PLANO</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">DATA/HORA</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">STATUS</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {appointments
                 .filter((a) => {
                   const matchSearch = a.patient.name.toLowerCase().includes(search.toLowerCase());
-                  const appointmentDate = new Date(a.scheduledAt);
-                  const matchStart = !startDate || appointmentDate >= new Date(startDate);
-                  const matchEnd = !endDate || appointmentDate <= new Date(endDate + "T23:59:59");
-                  return matchSearch && matchStart && matchEnd;
+                  const d = new Date(a.scheduledAt);
+                  return matchSearch && (!startDate || d >= new Date(startDate)) && (!endDate || d <= new Date(endDate + "T23:59:59"));
                 })
                 .map((a) => (
-                <TableRow key={a.id}>
-                  <TableCell className="font-medium">{a.patient.name}</TableCell>
-                  <TableCell>{a.doctor.name}</TableCell>
-                  <TableCell>{a.doctor.specialty.name}</TableCell>
-                  <TableCell>
-                    {a.healthPlan ? (
-                      <span className="text-sm">{a.healthPlan.name}</span>
-                    ) : (
-                      <span className="text-sm text-gray-400">Particular</span>
-                    )}
+                <TableRow key={a.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
+                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{a.patient.name}</TableCell>
+                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{a.doctor.name}</TableCell>
+                  <TableCell className="font-mono text-[11px] uppercase text-[#777777]">{a.doctor.specialty.name}</TableCell>
+                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">
+                    {a.healthPlan ? a.healthPlan.name : <span className="text-[#444444]">PARTICULAR</span>}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
                     {new Date(a.scheduledAt).toLocaleString("pt-BR")}
                   </TableCell>
                   <TableCell>
-                    <Badge className={statusColors[a.status]}>
-                      {statusLabels[a.status]}
-                    </Badge>
+                    <span className={`inline-block border-l-2 ${statusBorders[a.status] || "border-l-[#333333]"} pl-2 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA]`}>
+                      [ {statusLabels[a.status] || a.status} ]
+                    </span>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => handleEdit(a)}
-                      >
-                        <HiPencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => handleDelete(a.id)}
-                      >
-                        <HiTrash className="h-4 w-4 text-red-500" />
-                      </Button>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors" onClick={() => handleEdit(a)}>
+                        <HiPencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(a.id)}>
+                        <HiTrash className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
               {appointments.filter((a) => {
                 const matchSearch = a.patient.name.toLowerCase().includes(search.toLowerCase());
-                const appointmentDate = new Date(a.scheduledAt);
-                const matchStart = !startDate || appointmentDate >= new Date(startDate);
-                const matchEnd = !endDate || appointmentDate <= new Date(endDate + "T23:59:59");
-                return matchSearch && matchStart && matchEnd;
+                const d = new Date(a.scheduledAt);
+                return matchSearch && (!startDate || d >= new Date(startDate)) && (!endDate || d <= new Date(endDate + "T23:59:59"));
               }).length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-gray-500">
-                    {(search || startDate || endDate) ? "Nenhum resultado encontrado" : "Nenhuma consulta agendada"}
+                  <TableCell colSpan={7} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">
+                    {(search || startDate || endDate) ? "NENHUM RESULTADO ENCONTRADO" : "NENHUMA CONSULTA AGENDADA"}
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

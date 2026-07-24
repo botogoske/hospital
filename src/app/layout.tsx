@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
-import { Roboto, Roboto_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const roboto = Roboto({
-  weight: ["100", "300", "400", "500", "700", "900"],
+const inter = Inter({
+  weight: ["400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
-  variable: "--font-roboto",
+  variable: "--font-inter",
   display: "swap",
 });
 
-const robotoMono = Roboto_Mono({
+const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "700"],
   subsets: ["latin"],
-  variable: "--font-roboto-mono",
+  variable: "--font-jetbrains",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Hospital Greguito - Gestão Hospitalar",
-  description: "Sistema de gestão hospitalar completo com interface moderna e intuitiva",
+  title: "HOSPITAL GREGUITO — GESTAO HOSPITALAR",
+  description: "Sistema de gestao hospitalar — tactical telemetry interface",
 };
 
 export default function RootLayout({
@@ -29,9 +29,9 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${roboto.variable} ${robotoMono.variable} h-full antialiased font-sans`}
+      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased font-sans dark`}
     >
-      <body className="min-h-full flex flex-col font-sans bg-background text-foreground selection:bg-blue-600/20 selection:text-blue-600">
+      <body className="min-h-full flex flex-col font-sans">
         {children}
       </body>
     </html>
