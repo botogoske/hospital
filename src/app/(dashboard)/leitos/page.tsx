@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { bedSchema, type BedInput } from "@/lib/validations";
+import { toUpper } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FaBed } from "react-icons/fa";
-import { HiDocumentDownload } from "react-icons/hi";
+import { HiPlus, HiPencil, HiTrash, HiSearch, HiDocumentDownload } from "react-icons/hi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -15,9 +23,41 @@ const bedTypeLabels: Record<string, string> = { REGULAR: "REGULAR", ICU: "UTI", 
 
 export default function BedsPage() {
   const [beds, setBeds] = useState<Bed[]>([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [editingBed, setEditingBed] = useState<Bed | null>(null);
+  const [selectedType, setSelectedType] = useState("REGULAR");
+
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<BedInput>({
+    resolver: zodResolver(bedSchema),
+    defaultValues: { bedType: "REGULAR", floor: 1 },
+  });
 
   useEffect(() => { fetchBeds(); }, []);
   const fetchBeds = async () => { const res = await fetch("/api/beds"); if (res.ok) setBeds(await res.json()); };
+
+  const onSubmit = async (data: BedInput) => {
+    setLoading(true);
+    try {
+      const url = editingBed ? `/api/beds/${editingBed.id}` : "/api/beds";
+      const method = editingBed ? "PUT" : "POST";
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(toUpper(data)) });
+      if (res.ok) { setOpen(false); reset({ bedType: "REGULAR", floor: 1 }); setSelectedType("REGULAR"); setEditingBed(null); fetchBeds(); }
+    } finally { setLoading(false); }
+  };
+
+  const handleEdit = (bed: Bed) => {
+    setEditingBed(bed); setValue("number", bed.number); setValue("ward", bed.ward);
+    setValue("floor", bed.floor); setValue("bedType", bed.bedType as "REGULAR" | "ICU" | "EMERGENCY" | "PEDIATRIC");
+    setSelectedType(bed.bedType); setOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Tem certeza que deseja excluir este leito?")) return;
+    const res = await fetch(`/api/beds/${id}`, { method: "DELETE" });
+    if (res.ok) fetchBeds();
+  };
 
   const exportPdf = () => {
     const doc = new jsPDF({ orientation: "landscape" });
@@ -55,6 +95,10 @@ export default function BedsPage() {
     maintenance: beds.filter((b) => b.status === "MAINTENANCE").length,
   };
 
+  const filteredBeds = beds.filter((b) =>
+    b.number.toLowerCase().includes(search.toLowerCase()) || b.ward.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="border border-[#222222] bg-[#111111] p-6">
@@ -66,7 +110,31 @@ export default function BedsPage() {
               <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIAMENTO DE LEITOS DO HOSPITAL</p>
             </div>
           </div>
-          <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+          <div className="flex items-center gap-2">
+            <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset({ bedType: "REGULAR", floor: 1 }); setSelectedType("REGULAR"); setEditingBed(null); } }}>
+              <DialogTrigger render={<Button />}>
+                <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVO LEITO</span>
+              </DialogTrigger>
+              <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
+                <DialogHeader className="border-b border-[#222222] px-6 py-4">
+                  <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">{editingBed ? "[ EDITAR ] LEITO" : "[ NOVO ] CADASTRAR LEITO"}</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NUMERO DO LEITO</Label><Input {...register("number")} placeholder="EX: 101-A" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.number && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.number.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ALA</Label><Input {...register("ward")} placeholder="EX: CARDIOLOGIA" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.ward && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.ward.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ANDAR</Label><Input type="number" {...register("floor", { valueAsNumber: true })} placeholder="EX: 1" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.floor && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.floor.message}</p>}</div>
+                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TIPO DE LEITO</Label>
+                    <select value={selectedType} onChange={(e) => { setSelectedType(e.target.value); setValue("bedType", e.target.value as "REGULAR" | "ICU" | "EMERGENCY" | "PEDIATRIC"); }}
+                      className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                      <option value="REGULAR">REGULAR</option><option value="ICU">UTI</option><option value="EMERGENCY">EMERGENCIA</option><option value="PEDIATRIC">PEDIATRICO</option>
+                    </select>
+                  </div>
+                  <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>{loading ? "[ SALVANDO... ]" : editingBed ? "[ ATUALIZAR LEITO ]" : "[ CADASTRAR LEITO ]"}</Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </div>
 
@@ -85,7 +153,14 @@ export default function BedsPage() {
       </div>
 
       <div className="border border-[#222222] bg-[#111111]">
-        <div className="border-b border-[#222222] px-6 py-4"><span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ MAPA DE LEITOS ]</span></div>
+        <div className="border-b border-[#222222] px-6 py-4 space-y-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ MAPA DE LEITOS ]</span>
+          <div className="relative">
+            <HiSearch className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#555555]" />
+            <input placeholder="BUSCAR POR NUMERO OU ALA..." value={search} onChange={(e) => setSearch(e.target.value)}
+              className="w-full border border-[#222222] bg-[#0D0D0D] py-1.5 pl-9 pr-3 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA] placeholder:text-[#444444] focus:border-[#E61919] focus:outline-none rounded-none" />
+          </div>
+        </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -95,19 +170,26 @@ export default function BedsPage() {
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">ANDAR</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">TIPO</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">STATUS</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {beds.map((bed) => (
+              {filteredBeds.map((bed) => (
                 <TableRow key={bed.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
                   <TableCell className="font-mono text-[11px] font-bold text-[#EAEAEA]">{bed.number}</TableCell>
                   <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{bed.ward}</TableCell>
                   <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{bed.floor}</TableCell>
                   <TableCell className="font-mono text-[11px] uppercase text-[#777777]">{bedTypeLabels[bed.bedType]}</TableCell>
                   <TableCell><span className={`inline-block border-l-2 ${bedStatusBorders[bed.status] || "border-l-[#333333]"} pl-2 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA]`}>[ {bedStatusLabels[bed.status]} ]</span></TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors" onClick={() => handleEdit(bed)}><HiPencil className="h-3.5 w-3.5" /></button>
+                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(bed.id)}><HiTrash className="h-3.5 w-3.5" /></button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
-              {beds.length === 0 && <TableRow><TableCell colSpan={5} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">NENHUM LEITO CADASTRADO</TableCell></TableRow>}
+              {filteredBeds.length === 0 && <TableRow><TableCell colSpan={6} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">{search ? "NENHUM RESULTADO ENCONTRADO" : "NENHUM LEITO CADASTRADO"}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>
