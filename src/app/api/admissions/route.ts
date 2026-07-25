@@ -13,6 +13,7 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     data.admissionDate = new Date(data.admissionDate);
+    if (data.predictedDischargeDate) data.predictedDischargeDate = new Date(data.predictedDischargeDate);
     const admission = await prisma.$transaction(async (tx) => {
       const admission = await tx.admission.create({
         data: {
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
           doctorId: data.doctorId,
           bedId: data.bedId,
           admissionDate: data.admissionDate,
+          predictedDischargeDate: data.predictedDischargeDate || null,
           notes: data.notes,
         },
         include: { patient: true, doctor: true, bed: true },

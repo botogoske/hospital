@@ -160,6 +160,7 @@ export const admissionSchema = z.object({
   doctorId: z.string().min(1, "Médico é obrigatório"),
   bedId: z.string().min(1, "Leito é obrigatório"),
   admissionDate: z.string().min(1, "Data de internação é obrigatória"),
+  predictedDischargeDate: z.string().optional(),
   notes: z.string().optional(),
 });
 

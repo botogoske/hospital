@@ -17,7 +17,7 @@ interface Patient { id: string; name: string; }
 interface Doctor { id: string; name: string; }
 interface Bed { id: string; number: string; ward: string; status: string; }
 interface Admission {
-  id: string; admissionDate: string; dischargeDate?: string; notes?: string; status: string;
+  id: string; admissionDate: string; predictedDischargeDate?: string; dischargeDate?: string; notes?: string; status: string;
   patient: { name: string }; doctor: { name: string }; bed: { number: string; ward: string };
 }
 
@@ -100,6 +100,7 @@ export default function AdmissionsPage() {
                   {errors.bedId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.bedId.message}</p>}
                 </div>
                 <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; DATA DE INTERNACAO</Label><Input type="date" {...register("admissionDate")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.admissionDate && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.admissionDate.message}</p>}</div>
+                <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; PREVISAO DE ALTA</Label><Input type="date" {...register("predictedDischargeDate")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" /></div>
                 <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; OBSERVACOES</Label><Input {...register("notes")} placeholder="OPCIONAL" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" /></div>
                 <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>{loading ? "[ REGISTRANDO... ]" : "[ REGISTRAR INTERNAMENTO ]"}</Button>
               </form>
@@ -118,6 +119,7 @@ export default function AdmissionsPage() {
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">MEDICO</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">LEITO</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">DATA INTERNACAO</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PREVISAO ALTA</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">STATUS</TableHead>
                 <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
               </TableRow>
@@ -129,6 +131,7 @@ export default function AdmissionsPage() {
                   <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{a.doctor.name}</TableCell>
                   <TableCell className="font-mono text-[11px] text-[#EAEAEA]">LEITO {a.bed.number} - {a.bed.ward}</TableCell>
                   <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{new Date(a.admissionDate).toLocaleDateString("pt-BR")}</TableCell>
+                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{a.predictedDischargeDate ? new Date(a.predictedDischargeDate).toLocaleDateString("pt-BR") : "—"}</TableCell>
                   <TableCell><span className={`inline-block border-l-2 ${admissionStatusBorders[a.status] || "border-l-[#333333]"} pl-2 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA]`}>[ {admissionStatusLabels[a.status] || a.status} ]</span></TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
@@ -140,7 +143,7 @@ export default function AdmissionsPage() {
                   </TableCell>
                 </TableRow>
               ))}
-              {admissions.length === 0 && <TableRow><TableCell colSpan={6} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">NENHUM INTERNAMENTO REGISTRADO</TableCell></TableRow>}
+              {admissions.length === 0 && <TableRow><TableCell colSpan={7} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">NENHUM INTERNAMENTO REGISTRADO</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>

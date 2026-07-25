@@ -218,9 +218,10 @@ model Admission {
   doctor        Doctor    @relation(fields: [doctorId], references: [id])
   bedId         String
   bed           Bed       @relation(fields: [bedId], references: [id])
-  admissionDate DateTime
-  dischargeDate DateTime?
-  notes         String?
+  admissionDate          DateTime
+  predictedDischargeDate DateTime?
+  dischargeDate          DateTime?
+  notes                  String?
   status        AdmissionStatus @default(ACTIVE)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

@@ -17,6 +17,9 @@ export async function PUT(
           dischargeDate: data.dischargeDate
             ? new Date(data.dischargeDate)
             : undefined,
+          ...(data.status === "DISCHARGED" && {
+            predictedDischargeDate: new Date(),
+          }),
         },
         include: { patient: true, doctor: true, bed: true },
       });
