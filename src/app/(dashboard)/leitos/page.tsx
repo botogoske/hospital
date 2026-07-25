@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FaBed } from "react-icons/fa";
+import { HiDocumentDownload } from "react-icons/hi";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Bed { id: string; number: string; ward: string; floor: number; status: string; bedType: string; }
 
@@ -16,6 +19,35 @@ export default function BedsPage() {
   useEffect(() => { fetchBeds(); }, []);
   const fetchBeds = async () => { const res = await fetch("/api/beds"); if (res.ok) setBeds(await res.json()); };
 
+  const exportPdf = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("RELATORIO DE LEITOS", 14, 15);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(
+      `GERADO EM: ${new Date().toLocaleDateString("pt-BR")} | TOTAL: ${beds.length} LEITO(S)`,
+      14,
+      22,
+    );
+    autoTable(doc, {
+      startY: 28,
+      head: [["NUMERO", "ALA", "ANDAR", "TIPO", "STATUS"]],
+      body: beds.map((b) => [
+        b.number,
+        b.ward,
+        b.floor,
+        bedTypeLabels[b.bedType],
+        bedStatusLabels[b.status],
+      ]),
+      styles: { fontSize: 7, cellPadding: 2 },
+      headStyles: { fillColor: [230, 25, 25], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+    doc.save(`leitos_${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   const stats = {
     total: beds.length,
     available: beds.filter((b) => b.status === "AVAILABLE").length,
@@ -26,12 +58,15 @@ export default function BedsPage() {
   return (
     <div className="space-y-6">
       <div className="border border-[#222222] bg-[#111111] p-6">
-        <div className="flex items-center gap-4">
-          <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white"><FaBed className="h-5 w-5" /></div>
-          <div>
-            <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">LEITOS</h1>
-            <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIAMENTO DE LEITOS DO HOSPITAL</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white"><FaBed className="h-5 w-5" /></div>
+            <div>
+              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">LEITOS</h1>
+              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIAMENTO DE LEITOS DO HOSPITAL</p>
+            </div>
           </div>
+          <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
         </div>
       </div>
 

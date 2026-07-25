@@ -30,7 +30,10 @@ import {
   HiTrash,
   HiSearch,
   HiUserGroup,
+  HiDocumentDownload,
 } from "react-icons/hi";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Patient {
   id: string;
@@ -151,6 +154,53 @@ export default function PatientsPage() {
       p.phone.includes(searchTerm),
   );
 
+  const exportPdf = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("RELATORIO DE PACIENTES", 14, 15);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(
+      `GERADO EM: ${new Date().toLocaleDateString("pt-BR")} | TOTAL: ${filteredPatients.length} PACIENTE(S)`,
+      14,
+      22,
+    );
+
+    autoTable(doc, {
+      startY: 28,
+      head: [
+        [
+          "NOME",
+          "CPF",
+          "RG",
+          "TELEFONE",
+          "EMAIL",
+          "TIPO SANG.",
+          "NASCIMENTO",
+          "CEP",
+          "ENDERECO",
+        ],
+      ],
+      body: filteredPatients.map((p) => [
+        p.name,
+        p.cpf,
+        p.rg,
+        p.phone,
+        p.email || "—",
+        p.bloodType || "—",
+        new Date(p.birthDate).toLocaleDateString("pt-BR"),
+        p.cep,
+        p.address,
+      ]),
+      styles: { fontSize: 7, cellPadding: 2 },
+      headStyles: { fillColor: [230, 25, 25], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+
+    doc.save(`pacientes_${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   return (
     <div className="space-y-6 pb-8">
       {/* Page Title */}
@@ -170,16 +220,24 @@ export default function PatientsPage() {
             </div>
           </div>
 
-          <Dialog
-            open={open}
-            onOpenChange={(v) => {
-              setOpen(v);
-              if (!v) {
-                reset();
-                setEditingPatient(null);
-              }
-            }}
-          >
+          <div className="flex gap-2">
+            <button
+              onClick={exportPdf}
+              className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:bg-[#1A1A1A] transition-colors"
+            >
+              <HiDocumentDownload className="h-3.5 w-3.5" />
+              EXPORTAR PDF
+            </button>
+            <Dialog
+              open={open}
+              onOpenChange={(v) => {
+                setOpen(v);
+                if (!v) {
+                  reset();
+                  setEditingPatient(null);
+                }
+              }}
+            >
             <DialogTrigger render={<Button />}>
               <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515] transition-colors">
                 <HiPlus className="h-3.5 w-3.5" />
@@ -368,6 +426,7 @@ export default function PatientsPage() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
       </div>
 

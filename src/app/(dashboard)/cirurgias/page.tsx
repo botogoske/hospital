@@ -11,7 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { HiPlus, HiPencil, HiTrash } from "react-icons/hi";
+import { HiPlus, HiPencil, HiTrash, HiDocumentDownload } from "react-icons/hi";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { FaProcedures } from "react-icons/fa";
 
 interface Patient { id: string; name: string; }
@@ -69,6 +71,49 @@ export default function SurgeriesPage() {
     if (res.ok) fetchSchedules();
   };
 
+  const exportPdf = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("RELATORIO DE CIRURGIAS", 14, 15);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(
+      `GERADO EM: ${new Date().toLocaleDateString("pt-BR")} | TOTAL: ${schedules.length} CIRURGIA(S) AGENDADA(S)`,
+      14,
+      22,
+    );
+
+    autoTable(doc, {
+      startY: 28,
+      head: [
+        [
+          "CIRURGIA",
+          "PACIENTE",
+          "CIRURGIAO",
+          "DATA/HORA",
+          "RISCO",
+          "STATUS",
+          "OBSERVACOES",
+        ],
+      ],
+      body: schedules.map((s) => [
+        s.surgery.name,
+        s.patient.name,
+        s.doctor.name,
+        new Date(s.scheduledAt).toLocaleString("pt-BR"),
+        riskLabels[s.surgery.riskLevel] || s.surgery.riskLevel,
+        surgeryStatusLabels[s.status] || s.status,
+        s.notes || "—",
+      ]),
+      styles: { fontSize: 7, cellPadding: 2 },
+      headStyles: { fillColor: [230, 25, 25], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+
+    doc.save(`cirurgias_${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="border border-[#222222] bg-[#111111] p-6">
@@ -80,6 +125,14 @@ export default function SurgeriesPage() {
               <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">AGENDAMENTO DE CIRURGIAS</p>
             </div>
           </div>
+          <div className="flex gap-2">
+            <button
+              onClick={exportPdf}
+              className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:bg-[#1A1A1A] transition-colors"
+            >
+              <HiDocumentDownload className="h-3.5 w-3.5" />
+              EXPORTAR PDF
+            </button>
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setSelectedPatient(""); setSelectedDoctor(""); setSelectedSurgery(""); setEditingSchedule(null); } }}>
             <DialogTrigger render={<Button />}>
               <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVA CIRURGIA</span>
@@ -116,6 +169,7 @@ export default function SurgeriesPage() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
       </div>
 

@@ -31,8 +31,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { HiPlus, HiPencil, HiTrash } from "react-icons/hi";
+import { HiPlus, HiPencil, HiTrash, HiDocumentDownload } from "react-icons/hi";
 import { FaUserMd } from "react-icons/fa";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Doctor { id: string; name: string; cpf: string; crm: string; phone: string; email: string; specialtyId: string; specialty: { id: string; name: string }; }
 interface Specialty { id: string; name: string; }
@@ -84,6 +86,36 @@ export default function DoctorsPage() {
     if (res.ok) fetchDoctors();
   };
 
+  const exportPdf = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("RELATORIO DE MEDICOS", 14, 15);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(
+      `GERADO EM: ${new Date().toLocaleDateString("pt-BR")} | TOTAL: ${doctors.length} MEDICO(S)`,
+      14,
+      22,
+    );
+    autoTable(doc, {
+      startY: 28,
+      head: [["NOME", "CPF", "CRM", "TELEFONE", "EMAIL", "ESPECIALIDADE"]],
+      body: doctors.map((d) => [
+        d.name,
+        d.cpf,
+        d.crm,
+        d.phone,
+        d.email,
+        d.specialty.name,
+      ]),
+      styles: { fontSize: 7, cellPadding: 2 },
+      headStyles: { fillColor: [230, 25, 25], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+    doc.save(`medicos_${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="border border-[#222222] bg-[#111111] p-6">
@@ -95,7 +127,9 @@ export default function DoctorsPage() {
               <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIE OS MEDICOS DO HOSPITAL</p>
             </div>
           </div>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setSelectedSpecialty(""); setEditingDoctor(null); } }}>
+          <div className="flex items-center gap-2">
+            <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setSelectedSpecialty(""); setEditingDoctor(null); } }}>
             <DialogTrigger render={<Button />}>
               <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVO MEDICO</span>
             </DialogTrigger>
@@ -125,6 +159,7 @@ export default function DoctorsPage() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
       </div>
 

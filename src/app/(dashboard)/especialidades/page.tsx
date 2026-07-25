@@ -10,8 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { HiPlus, HiPencil, HiTrash } from "react-icons/hi";
+import { HiPlus, HiPencil, HiTrash, HiDocumentDownload } from "react-icons/hi";
 import { FaStethoscope } from "react-icons/fa";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Specialty { id: string; name: string; description?: string; _count: { doctors: number }; }
 
@@ -44,6 +46,33 @@ export default function SpecialtiesPage() {
     if (res.ok) fetchSpecialties();
   };
 
+  const exportPdf = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("RELATORIO DE ESPECIALIDADES", 14, 15);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(
+      `GERADO EM: ${new Date().toLocaleDateString("pt-BR")} | TOTAL: ${specialties.length} ESPECIALIDADE(S)`,
+      14,
+      22,
+    );
+    autoTable(doc, {
+      startY: 28,
+      head: [["NOME", "DESCRICAO", "MEDICOS"]],
+      body: specialties.map((s) => [
+        s.name,
+        s.description || "—",
+        s._count.doctors,
+      ]),
+      styles: { fontSize: 7, cellPadding: 2 },
+      headStyles: { fillColor: [230, 25, 25], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+    doc.save(`especialidades_${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="border border-[#222222] bg-[#111111] p-6">
@@ -55,7 +84,9 @@ export default function SpecialtiesPage() {
               <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIE AS ESPECIALIDADES MEDICAS</p>
             </div>
           </div>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditingSpecialty(null); } }}>
+          <div className="flex items-center gap-2">
+            <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditingSpecialty(null); } }}>
             <DialogTrigger render={<Button />}>
               <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVA ESPECIALIDADE</span>
             </DialogTrigger>
@@ -70,6 +101,7 @@ export default function SpecialtiesPage() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
       </div>
 

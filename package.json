@@ -1,6 +1,7 @@
 {
   "name": "hospital",
   "version": "0.1.0",
+  "author":"Elio Joly Botogoske",
   "private": true,
   "scripts": {
     "dev": "next dev",

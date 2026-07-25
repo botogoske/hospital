@@ -11,7 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { HiPlus, HiPencil, HiTrash, HiUsers } from "react-icons/hi";
+import { HiPlus, HiPencil, HiTrash, HiUsers, HiDocumentDownload } from "react-icons/hi";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Employee { id: string; name: string; cpf: string; phone: string; email: string; address: string; cep: string; position: string; salary: number; admissionDate: string; }
 
@@ -62,6 +64,35 @@ export default function EmployeesPage() {
     if (res.ok) fetchEmployees();
   };
 
+  const exportPdf = () => {
+    const doc = new jsPDF({ orientation: "landscape" });
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("RELATORIO DE FUNCIONARIOS", 14, 15);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.text(
+      `GERADO EM: ${new Date().toLocaleDateString("pt-BR")} | TOTAL: ${employees.length} FUNCIONARIO(S)`,
+      14,
+      22,
+    );
+    autoTable(doc, {
+      startY: 28,
+      head: [["NOME", "CPF", "CARGO", "SALARIO", "ADMISSAO"]],
+      body: employees.map((e) => [
+        e.name,
+        e.cpf,
+        e.position,
+        e.salary.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+        new Date(e.admissionDate).toLocaleDateString("pt-BR"),
+      ]),
+      styles: { fontSize: 7, cellPadding: 2 },
+      headStyles: { fillColor: [230, 25, 25], textColor: 255 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+    });
+    doc.save(`funcionarios_${new Date().toISOString().slice(0, 10)}.pdf`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="border border-[#222222] bg-[#111111] p-6">
@@ -73,7 +104,9 @@ export default function EmployeesPage() {
               <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIE OS FUNCIONARIOS DO HOSPITAL</p>
             </div>
           </div>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditingEmployee(null); } }}>
+          <div className="flex items-center gap-2">
+            <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditingEmployee(null); } }}>
             <DialogTrigger render={<Button />}>
               <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVO FUNCIONARIO</span>
             </DialogTrigger>
@@ -97,6 +130,7 @@ export default function EmployeesPage() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
       </div>
 
