@@ -1,0 +1,11 @@
+{
+  "terminal.integrated.fontFamily": "'JetBrains Mono'",
+  "editor.fontFamily": "'JetBrains Mono'",
+  "editor.fontSize": 12,
+  "terminal.integrated.fontSize": 12,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "editor.formatOnSave": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
