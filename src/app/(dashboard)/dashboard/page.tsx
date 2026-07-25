@@ -135,24 +135,32 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 p-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 border border-[#333333] bg-[#0D0D0D] px-3 py-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
-              <span className="text-[#E61919]">///</span>
+              <span className="text-[#E61919]"></span>
               <span>PAINEL DE CONTROLE HOSPITALAR</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">
-              BEM-VINDO AO<br />
+            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-[#EAEAEA] leading-none">
+              BEM-VINDO AO
+              <br />
               <span className="text-[#E61919]">HOSPITAL GREGUITO</span>
             </h1>
             <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-[#555555] max-w-xl">
-              VISAO CONSOLIDADA EM TEMPO REAL DA OCUPACAO DE LEITOS, CIRURGIAS AGENDADAS E ATENDIMENTO A PACIENTES.
+              VISAO CONSOLIDADA EM TEMPO REAL DA OCUPACAO DE LEITOS, CIRURGIAS
+              AGENDADAS E ATENDIMENTO A PACIENTES.
             </p>
           </div>
 
           <div className="flex flex-col gap-2">
-            <Link href="/consultas" className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515] transition-colors">
+            <Link
+              href="/consultas"
+              className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515] transition-colors"
+            >
               <HiPlus className="h-3.5 w-3.5" />
               NOVA CONSULTA
             </Link>
-            <Link href="/pacientes" className="flex items-center gap-2 border border-[#333333] bg-[#1A1A1A] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:border-[#555555] transition-colors">
+            <Link
+              href="/pacientes"
+              className="flex items-center gap-2 border border-[#333333] bg-[#1A1A1A] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:border-[#555555] transition-colors"
+            >
               <HiUserGroup className="h-3.5 w-3.5" />
               NOVO PACIENTE
             </Link>
@@ -165,7 +173,11 @@ export default function DashboardPage() {
             REV 2.6 &middot; UNIT / D-01
           </span>
           <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#333333]">
-            {new Date().toLocaleDateString("pt-BR")} {new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+            {new Date().toLocaleDateString("pt-BR")}{" "}
+            {new Date().toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </span>
         </div>
       </div>
@@ -177,11 +189,13 @@ export default function DashboardPage() {
             key={stat.title}
             className="bg-[#111111] p-5 group hover:bg-[#141414] transition-colors"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className={`flex h-8 w-8 items-center justify-center ${stat.accent ? "bg-[#E61919] text-white" : "bg-[#1A1A1A] text-[#777777] border border-[#333333]"} transition-colors group-hover:text-[#EAEAEA]`}>
+            <div className="flex items-center justify-between mb-2">
+              <div
+                className={`flex h-8 w-8 items-center justify-center ${stat.accent ? "bg-[#E61919] text-white" : "bg-[#1A1A1A] text-[#777777] border border-[#333333]"} transition-colors group-hover:text-[#EAEAEA]`}
+              >
                 <stat.icon className="h-4 w-4" />
               </div>
-              <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-[#444444]">
+              <span className="font-mono text-[9px] uppercase tracking-widest text-[#444444]">
                 {stat.accent ? ">>> ACTIVE" : "[ OK ]"}
               </span>
             </div>
@@ -189,7 +203,7 @@ export default function DashboardPage() {
               <p className="font-mono text-2xl font-bold tracking-tight text-[#EAEAEA]">
                 {stat.value}
               </p>
-              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555]">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-[#555555]">
                 {stat.title}
               </p>
               <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#333333]">
@@ -213,53 +227,105 @@ export default function DashboardPage() {
             </div>
           </div>
           <div className="grid gap-px bg-[#222222] sm:grid-cols-2">
-            <Link href="/consultas" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+            <Link
+              href="/consultas"
+              className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors"
+            >
               <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
                 <HiCalendar className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">AGENDAR CONSULTA</h4>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">MARCAR NOVA CONSULTA AMBULATORIAL OU RETORNO</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  AGENDAR CONSULTA
+                </h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  MARCAR NOVA CONSULTA AMBULATORIAL OU RETORNO
+                </p>
               </div>
             </Link>
 
-            <Link href="/internamentos" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+            <Link
+              href="/internamentos"
+              className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors"
+            >
               <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#4AF626] group-hover:text-black group-hover:border-[#4AF626] transition-colors">
                 <FaHospital className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">REGISTRAR INTERNAMENTO</h4>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">DAR ENTRADA DE PACIENTE EM LEITO HOSPITALAR</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  REGISTRAR INTERNAMENTO
+                </h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  DAR ENTRADA DE PACIENTE EM LEITO HOSPITALAR
+                </p>
               </div>
             </Link>
 
-            <Link href="/prontuarios" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+            <Link
+              href="/prontuarios"
+              className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors"
+            >
               <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
                 <FaNotesMedical className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">PRONTUARIO ELETRONICO</h4>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">CONSULTAR HISTORICO MEDICO E EVOLUCOES</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  PRONTUARIO ELETRONICO
+                </h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  CONSULTAR HISTORICO MEDICO E EVOLUCOES
+                </p>
               </div>
             </Link>
 
-            <Link href="/cirurgias" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+            <Link
+              href="/cirurgias"
+              className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors"
+            >
               <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
                 <FaProcedures className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">MAPA CIRURGICO</h4>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">VISUALIZAR HORARIOS DE SALAS DE CIRURGIA</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  MAPA CIRURGICO
+                </h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  VISUALIZAR HORARIOS DE SALAS DE CIRURGIA
+                </p>
               </div>
             </Link>
 
-            <Link href="/planos-de-saude" className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors">
+            <Link
+              href="/planos-de-saude"
+              className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors"
+            >
               <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#4AF626] group-hover:text-black group-hover:border-[#4AF626] transition-colors">
                 <HiShieldCheck className="h-3.5 w-3.5" />
               </div>
               <div>
-                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">PLANOS DE SAUDE</h4>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">GERENCIAR CONVENIOS E COBERTURAS</p>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  PLANOS DE SAUDE
+                </h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  GERENCIAR CONVENIOS E COBERTURAS
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/leitos"
+              className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors"
+            >
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
+                <FaBed className="h-3.5 w-3.5" />
+              </div>
+              <div>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  GERENCIAR LEITOS
+                </h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  CADASTRAR E ADMINISTRAR LEITOS HOSPITALARES
+                </p>
               </div>
             </Link>
           </div>
@@ -277,24 +343,36 @@ export default function DashboardPage() {
             <div className="flex gap-3 items-start border-b border-[#1A1A1A] py-3">
               <div className="mt-1 h-1.5 w-1.5 bg-[#E61919] shrink-0" />
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">PACIENTE JOAO SILVA INTERNADO</p>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">LEITO 204 &middot; UTI GERAL &middot; HA 15 MIN</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  PACIENTE JOAO SILVA INTERNADO
+                </p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  LEITO 204 &middot; UTI GERAL &middot; HA 15 MIN
+                </p>
               </div>
             </div>
 
             <div className="flex gap-3 items-start border-b border-[#1A1A1A] py-3">
               <div className="mt-1 h-1.5 w-1.5 bg-[#4AF626] shrink-0" />
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">CIRURGIA ORTOPEDICA FINALIZADA</p>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">DRA. MARIA SANTOS &middot; SALA 02 &middot; HA 42 MIN</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  CIRURGIA ORTOPEDICA FINALIZADA
+                </p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  DRA. MARIA SANTOS &middot; SALA 02 &middot; HA 42 MIN
+                </p>
               </div>
             </div>
 
             <div className="flex gap-3 items-start py-3">
               <div className="mt-1 h-1.5 w-1.5 bg-[#777777] shrink-0" />
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">ALTA MEDICA CONCEDIDA</p>
-                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">PACIENTE ANA COSTA &middot; LEITO 108 &middot; HA 1 HORA</p>
+                <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  ALTA MEDICA CONCEDIDA
+                </p>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  PACIENTE ANA COSTA &middot; LEITO 108 &middot; HA 1 HORA
+                </p>
               </div>
             </div>
 
@@ -303,7 +381,9 @@ export default function DashboardPage() {
                 <HiShieldCheck className="h-3.5 w-3.5 text-[#4AF626]" />
                 BACKUP AUTOMATICO
               </span>
-              <span className="font-mono text-[10px] font-bold text-[#555555]">08:00</span>
+              <span className="font-mono text-[10px] font-bold text-[#555555]">
+                08:00
+              </span>
             </div>
           </div>
         </div>
