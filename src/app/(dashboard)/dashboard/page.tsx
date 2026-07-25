@@ -183,7 +183,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Grid of Stat Cards */}
-      <div className="grid gap-px bg-[#222222] border border-[#222222]">
+      <div className="grid gap-px bg-[#222222] border border-[#222222] grid-cols-3">
         {statCards.map((stat) => (
           <div
             key={stat.title}
