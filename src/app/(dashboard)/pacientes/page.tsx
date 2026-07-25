@@ -24,7 +24,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { HiPlus, HiPencil, HiTrash, HiSearch, HiUserGroup } from "react-icons/hi";
+import {
+  HiPlus,
+  HiPencil,
+  HiTrash,
+  HiSearch,
+  HiUserGroup,
+} from "react-icons/hi";
 
 interface Patient {
   id: string;
@@ -57,21 +63,33 @@ export default function PatientsPage() {
     resolver: zodResolver(patientSchema),
   });
 
-  const handleCpfChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("cpf", maskCpf(e.target.value), { shouldValidate: true });
-  }, [setValue]);
+  const handleCpfChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("cpf", maskCpf(e.target.value), { shouldValidate: true });
+    },
+    [setValue],
+  );
 
-  const handlePhoneChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("phone", maskPhone(e.target.value), { shouldValidate: true });
-  }, [setValue]);
+  const handlePhoneChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("phone", maskPhone(e.target.value), { shouldValidate: true });
+    },
+    [setValue],
+  );
 
-  const handleCepChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("cep", maskCep(e.target.value), { shouldValidate: true });
-  }, [setValue]);
+  const handleCepChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("cep", maskCep(e.target.value), { shouldValidate: true });
+    },
+    [setValue],
+  );
 
-  const handleRgChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("rg", maskRg(e.target.value), { shouldValidate: true });
-  }, [setValue]);
+  const handleRgChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("rg", maskRg(e.target.value), { shouldValidate: true });
+    },
+    [setValue],
+  );
 
   useEffect(() => {
     fetchPatients();
@@ -130,7 +148,7 @@ export default function PatientsPage() {
     (p) =>
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.cpf.includes(searchTerm) ||
-      p.phone.includes(searchTerm)
+      p.phone.includes(searchTerm),
   );
 
   return (
@@ -143,10 +161,10 @@ export default function PatientsPage() {
               <HiUserGroup className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">
+              <h1 className="text-3xl font-black uppercase tracking-tighter text-[#EAEAEA] leading-none">
                 GESTAO DE PACIENTES
               </h1>
-              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-[#555555] mt-1">
                 CADASTRE, EDITE E CONSULTE AS INFORMACOES MEDICAS DOS PACIENTES
               </p>
             </div>
@@ -171,64 +189,181 @@ export default function PatientsPage() {
 
             <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
               <DialogHeader className="border-b border-[#222222] px-6 py-4">
-                <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">
-                  {editingPatient ? "[ EDITAR ] CADASTRO DO PACIENTE" : "[ NOVO ] CADASTRAR PACIENTE"}
+                <DialogTitle className="font-mono text-sm uppercase tracking-widest text-[#EAEAEA]">
+                  {editingPatient
+                    ? "[ EDITAR ] CADASTRO DO PACIENTE"
+                    : "[ NOVO ] CADASTRAR PACIENTE"}
                 </DialogTitle>
               </DialogHeader>
 
               <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NOME COMPLETO</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("name")} />
-                    {errors.name && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.name.message}</p>}
+                <div className="grid gap-4 sm:grid-cols-4">
+                  {/* NOME - linha inteira */}
+                  <div className="col-span-4 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; NOME COMPLETO
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      {...register("name")}
+                    />
+                    {errors.name && (
+                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                        {errors.name.message}
+                      </p>
+                    )}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CPF</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("cpf")} onChange={handleCpfChange} maxLength={14} placeholder="000.000.000-00" />
-                    {errors.cpf && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cpf.message}</p>}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; RG</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("rg")} onChange={handleRgChange} maxLength={12} placeholder="XX.XXX.XXX-X" />
-                    {errors.rg && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.rg.message}</p>}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TELEFONE / WHATSAPP</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("phone")} onChange={handlePhoneChange} maxLength={15} placeholder="(00) 00000-0000" />
-                    {errors.phone && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.phone.message}</p>}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; EMAIL</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" type="email" {...register("email")} />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; DATA DE NASCIMENTO</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" type="date" {...register("birthDate")} />
-                    {errors.birthDate && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.birthDate.message}</p>}
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TIPO SANGUINEO</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("bloodType")} placeholder="A+, O-, B+, etc" />
+
+                  {/* CPF + RG - mesma linha */}
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; CPF
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      {...register("cpf")}
+                      onChange={handleCpfChange}
+                      maxLength={14}
+                      placeholder="000.000.000-00"
+                    />
+                    {errors.cpf && (
+                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                        {errors.cpf.message}
+                      </p>
+                    )}
                   </div>
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ENDERECO RESIDENCIAL</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("address")} />
-                    {errors.address && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.address.message}</p>}
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; RG
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      {...register("rg")}
+                      onChange={handleRgChange}
+                      maxLength={12}
+                      placeholder="XX.XXX.XXX-X"
+                    />
+                    {errors.rg && (
+                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                        {errors.rg.message}
+                      </p>
+                    )}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; CEP</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("cep")} onChange={handleCepChange} maxLength={9} placeholder="00000-000" />
-                    {errors.cep && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.cep.message}</p>}
+
+                  {/* TELEFONE */}
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; TELEFONE / WHATSAPP
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      {...register("phone")}
+                      onChange={handlePhoneChange}
+                      maxLength={15}
+                      placeholder="(00) 00000-0000"
+                    />
+                    {errors.phone && (
+                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                        {errors.phone.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* DATA NASCIMENTO */}
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; DATA DE NASCIMENTO
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      type="date"
+                      {...register("birthDate")}
+                    />
+                    {errors.birthDate && (
+                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                        {errors.birthDate.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* EMAIL - linha inteira */}
+                  <div className="col-span-4 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; EMAIL
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      type="email"
+                      {...register("email")}
+                    />
+                  </div>
+
+                  {/* TIPO SANGUINEO + CEP mesma linha */}
+                  <div className="col-span-2 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; TIPO SANGUINEO
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      {...register("bloodType")}
+                      placeholder="A+, O-, B+"
+                    />
                   </div>
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; ALERGIAS / OBSERVACOES</Label>
-                    <Input className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" {...register("allergies")} placeholder="EX: ALERGIA A PENICILINA" />
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; CEP
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      {...register("cep")}
+                      onChange={handleCepChange}
+                      maxLength={9}
+                      placeholder="00000-000"
+                    />
+                    {errors.cep && (
+                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                        {errors.cep.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-span-4 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; ENDERECO RESIDENCIAL
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      {...register("address")}
+                    />
+                    {errors.address && (
+                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                        {errors.address.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* ALERGIAS - linha inteira */}
+                  <div className="col-span-4 space-y-1.5">
+                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                      &gt; ALERGIAS / OBSERVACOES
+                    </Label>
+                    <Input
+                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      {...register("allergies")}
+                      placeholder="EX: ALERGIA A PENICILINA"
+                    />
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>
-                  {loading ? "[ SALVANDO REGISTRO... ]" : editingPatient ? "[ ATUALIZAR PACIENTE ]" : "[ CADASTRAR PACIENTE ]"}
+                <Button
+                  type="submit"
+                  className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10"
+                  disabled={loading}
+                >
+                  {loading
+                    ? "[ SALVANDO REGISTRO... ]"
+                    : editingPatient
+                      ? "[ ATUALIZAR PACIENTE ]"
+                      : "[ CADASTRAR PACIENTE ]"}
                 </Button>
               </form>
             </DialogContent>
@@ -258,13 +393,27 @@ export default function PatientsPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PACIENTE</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">CPF</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">TELEFONE</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">CEP</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">TIPO SANGUINEO</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">NASCIMENTO</TableHead>
-                <TableHead className="text-right font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">ACOES</TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                  PACIENTE
+                </TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                  CPF
+                </TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                  TELEFONE
+                </TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                  CEP
+                </TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                  TIPO SANGUINEO
+                </TableHead>
+                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                  NASCIMENTO
+                </TableHead>
+                <TableHead className="text-right font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                  ACOES
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -275,28 +424,45 @@ export default function PatientsPage() {
                   .slice(0, 2)
                   .join("");
                 return (
-                  <TableRow key={p.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
+                  <TableRow
+                    key={p.id}
+                    className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors"
+                  >
                     <TableCell className="py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 items-center justify-center bg-[#1A1A1A] border border-[#333333] font-mono text-[10px] font-bold text-[#777777]">
                           {initials}
                         </div>
                         <div>
-                          <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">{p.name}</p>
-                          {p.email && <p className="font-mono text-[9px] uppercase text-[#444444]">{p.email}</p>}
+                          <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                            {p.name}
+                          </p>
+                          {p.email && (
+                            <p className="font-mono text-[9px] uppercase text-[#444444]">
+                              {p.email}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{p.cpf}</TableCell>
-                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{p.phone}</TableCell>
-                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{p.cep}</TableCell>
+                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                      {p.cpf}
+                    </TableCell>
+                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                      {p.phone}
+                    </TableCell>
+                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                      {p.cep}
+                    </TableCell>
                     <TableCell>
                       {p.bloodType ? (
                         <span className="inline-flex items-center gap-1 border border-[#E61919]/30 bg-[#E61919]/10 px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-[#E61919]">
                           {p.bloodType}
                         </span>
                       ) : (
-                        <span className="font-mono text-[10px] text-[#444444]">—</span>
+                        <span className="font-mono text-[10px] text-[#444444]">
+                          —
+                        </span>
                       )}
                     </TableCell>
                     <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
@@ -304,10 +470,16 @@ export default function PatientsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors" onClick={() => handleEdit(p)}>
+                        <button
+                          className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"
+                          onClick={() => handleEdit(p)}
+                        >
                           <HiPencil className="h-3.5 w-3.5" />
                         </button>
-                        <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(p.id)}>
+                        <button
+                          className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors"
+                          onClick={() => handleDelete(p.id)}
+                        >
                           <HiTrash className="h-3.5 w-3.5" />
                         </button>
                       </div>
@@ -317,7 +489,10 @@ export default function PatientsPage() {
               })}
               {filteredPatients.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">
+                  <TableCell
+                    colSpan={7}
+                    className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]"
+                  >
                     NENHUM PACIENTE ENCONTRADO.
                   </TableCell>
                 </TableRow>

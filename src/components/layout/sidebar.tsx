@@ -74,7 +74,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation Groups */}
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4 no-scrollbar">
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4 sidebar-scrollbar">
         {menuGroups.map((group) => (
           <div key={group.title} className="space-y-1">
             <h3 className="px-2 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-[#444444]">

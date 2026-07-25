@@ -144,6 +144,25 @@ body::after {
   display: none; /* Chrome/Safari */
 }
 
+/* ===== SCROLLBAR — SIDEBAR THIN ===== */
+.sidebar-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #333333 #080808; /* thumb track */
+}
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: #080808;
+}
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 2px;
+}
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #E61919;
+}
+
 /* ===== SCROLLBAR — INDUSTRIAL ===== */
 ::-webkit-scrollbar {
   width: 4px;
