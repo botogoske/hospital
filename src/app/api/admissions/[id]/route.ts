@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -37,16 +37,14 @@ export async function PUT(
     return NextResponse.json(admission);
   } catch (error: unknown) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao atualizar internamento";
+      error instanceof Error ? error.message : "Erro ao atualizar internamento";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -67,9 +65,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao excluir internamento";
+      error instanceof Error ? error.message : "Erro ao excluir internamento";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

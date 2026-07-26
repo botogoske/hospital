@@ -24,9 +24,7 @@ export async function POST(request: Request) {
     return NextResponse.json(healthPlan, { status: 201 });
   } catch (error: unknown) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao criar plano de saúde";
+      error instanceof Error ? error.message : "Erro ao criar plano de saúde";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

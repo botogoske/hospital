@@ -49,56 +49,62 @@
 }
 
 :root {
-  --background: #0A0A0A;
-  --foreground: #EAEAEA;
+  --background: #0a0a0a;
+  --foreground: #eaeaea;
   --card: #111111;
-  --card-foreground: #EAEAEA;
+  --card-foreground: #eaeaea;
   --popover: #111111;
-  --popover-foreground: #EAEAEA;
-  --primary: #E61919;
-  --primary-foreground: #FFFFFF;
-  --secondary: #1A1A1A;
-  --secondary-foreground: #EAEAEA;
-  --muted: #1A1A1A;
+  --popover-foreground: #eaeaea;
+  --primary: #e61919;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #eaeaea;
+  --muted: #1a1a1a;
   --muted-foreground: #777777;
-  --accent: #1A1A1A;
-  --accent-foreground: #EAEAEA;
-  --destructive: #E61919;
+  --accent: #1a1a1a;
+  --accent-foreground: #eaeaea;
+  --destructive: #e61919;
   --border: #333333;
-  --input: #1A1A1A;
-  --ring: #E61919;
-  --chart-1: #E61919;
-  --chart-2: #4AF626;
-  --chart-3: #E61919;
+  --input: #1a1a1a;
+  --ring: #e61919;
+  --chart-1: #e61919;
+  --chart-2: #4af626;
+  --chart-3: #e61919;
   --chart-4: #777777;
   --chart-5: #333333;
   --radius: 0;
   --sidebar: #080808;
-  --sidebar-foreground: #EAEAEA;
-  --sidebar-primary: #E61919;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #1A1A1A;
-  --sidebar-accent-foreground: #EAEAEA;
+  --sidebar-foreground: #eaeaea;
+  --sidebar-primary: #e61919;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #eaeaea;
   --sidebar-border: #222222;
-  --sidebar-ring: #E61919;
+  --sidebar-ring: #e61919;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body, html {
+  body,
+  html {
     font-family: var(--font-inter), "Inter", system-ui, sans-serif;
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #0A0A0A;
-    color: #EAEAEA;
+    background-color: #0a0a0a;
+    color: #eaeaea;
   }
   html {
     @apply font-sans scroll-smooth;
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-inter), "Inter", system-ui, sans-serif;
     letter-spacing: -0.04em;
     line-height: 0.9;
@@ -160,7 +166,7 @@ body::after {
   border-radius: 2px;
 }
 .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #E61919;
+  background: #e61919;
 }
 
 /* ===== SCROLLBAR — INDUSTRIAL ===== */
@@ -169,13 +175,13 @@ body::after {
   height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
   background: #333333;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #E61919;
+  background: #e61919;
 }
 
 /* ===== FORM INPUTS — FORCED UPPERCASE ===== */
@@ -198,6 +204,6 @@ textarea::placeholder {
 
 /* ===== SELECTION ===== */
 ::selection {
-  background: #E61919;
-  color: #FFFFFF;
+  background: #e61919;
+  color: #ffffff;
 }

@@ -22,12 +22,14 @@ export async function POST(request: Request) {
     });
     if (data.materials?.length > 0) {
       await prisma.surgeryMaterial.createMany({
-        data: data.materials.map((m: { name: string; quantity: number; unit: string }) => ({
-          surgeryId: surgery.id,
-          name: m.name,
-          quantity: m.quantity,
-          unit: m.unit,
-        })),
+        data: data.materials.map(
+          (m: { name: string; quantity: number; unit: string }) => ({
+            surgeryId: surgery.id,
+            name: m.name,
+            quantity: m.quantity,
+            unit: m.unit,
+          }),
+        ),
       });
     }
     return NextResponse.json(surgery, { status: 201 });

@@ -212,9 +212,7 @@ export default function PatientsPage() {
               <HiUserGroup className="h-5 w-5" />
             </div>
             <div>
-              <h1 className={formStyles.header.title}>
-                GESTAO DE PACIENTES
-              </h1>
+              <h1 className={formStyles.header.title}>GESTAO DE PACIENTES</h1>
               <p className={formStyles.header.subtitle}>
                 CADASTRE, EDITE E CONSULTE AS INFORMACOES MEDICAS DOS PACIENTES
               </p>
@@ -222,10 +220,7 @@ export default function PatientsPage() {
           </div>
 
           <div className="flex gap-2">
-            <button
-              onClick={exportPdf}
-              className={formStyles.button.export}
-            >
+            <button onClick={exportPdf} className={formStyles.button.export}>
               <HiDocumentDownload className="h-3.5 w-3.5" />
               EXPORTAR PDF
             </button>
@@ -239,194 +234,191 @@ export default function PatientsPage() {
                 }
               }}
             >
-            <DialogTrigger render={<Button />}>
-              <span className={formStyles.button.trigger}>
-                <HiPlus className="h-3.5 w-3.5" />
-                NOVO PACIENTE
-              </span>
-            </DialogTrigger>
+              <DialogTrigger render={<Button />}>
+                <span className={formStyles.button.trigger}>
+                  <HiPlus className="h-3.5 w-3.5" />
+                  NOVO PACIENTE
+                </span>
+              </DialogTrigger>
 
-            <DialogContent className={formStyles.dialog.content}>
-              <DialogHeader className={formStyles.dialog.header}>
-                <DialogTitle className={formStyles.dialog.title}>
-                  {editingPatient
-                    ? "[ EDITAR ] CADASTRO DO PACIENTE"
-                    : "[ NOVO ] CADASTRAR PACIENTE"}
-                </DialogTitle>
-              </DialogHeader>
+              <DialogContent className={formStyles.dialog.content}>
+                <DialogHeader className={formStyles.dialog.header}>
+                  <DialogTitle className={formStyles.dialog.title}>
+                    {editingPatient
+                      ? "[ EDITAR ] CADASTRO DO PACIENTE"
+                      : "[ NOVO ] CADASTRAR PACIENTE"}
+                  </DialogTitle>
+                </DialogHeader>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-4">
-                  {/* NOME - linha inteira */}
-                  <div className="col-span-4 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; NOME COMPLETO
-                    </Label>
-                    <Input
-                      className={`${formStyles.field.input} h-10`}
-                      {...register("name")}
-                    />
-                    {errors.name && (
-                      <p className={formStyles.field.error}>
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* CPF + RG - mesma linha */}
-                  <div className="col-span-2 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; CPF
-                    </Label>
-                    <Input
-                      className={formStyles.field.input}
-                      {...register("cpf")}
-                      onChange={handleCpfChange}
-                      maxLength={14}
-                      placeholder="000.000.000-00"
-                    />
-                    {errors.cpf && (
-                      <p className={formStyles.field.error}>
-                        {errors.cpf.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-span-2 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; RG
-                    </Label>
-                    <Input
-                      className={formStyles.field.input}
-                      {...register("rg")}
-                      onChange={handleRgChange}
-                      maxLength={12}
-                      placeholder="XX.XXX.XXX-X"
-                    />
-                    {errors.rg && (
-                      <p className={formStyles.field.error}>
-                        {errors.rg.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* TELEFONE */}
-                  <div className="col-span-2 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; TELEFONE / WHATSAPP
-                    </Label>
-                    <Input
-                      className={`${formStyles.field.input} h-10`}
-                      {...register("phone")}
-                      onChange={handlePhoneChange}
-                      maxLength={15}
-                      placeholder="(00) 00000-0000"
-                    />
-                    {errors.phone && (
-                      <p className={formStyles.field.error}>
-                        {errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* DATA NASCIMENTO */}
-                  <div className="col-span-2 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; DATA DE NASCIMENTO
-                    </Label>
-                    <Input
-                      className={`${formStyles.field.input} h-10`}
-                      type="date"
-                      {...register("birthDate")}
-                    />
-                    {errors.birthDate && (
-                      <p className={formStyles.field.error}>
-                        {errors.birthDate.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* EMAIL - linha inteira */}
-                  <div className="col-span-4 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; EMAIL
-                    </Label>
-                    <Input
-                      className={`${formStyles.field.input} h-10`}
-                      type="email"
-                      {...register("email")}
-                    />
-                  </div>
-
-                  {/* TIPO SANGUINEO + CEP mesma linha */}
-                  <div className="col-span-2 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; TIPO SANGUINEO
-                    </Label>
-                    <Input
-                      className={formStyles.field.input}
-                      {...register("bloodType")}
-                      placeholder="A+, O-, B+"
-                    />
-                  </div>
-                  <div className="col-span-2 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; CEP
-                    </Label>
-                    <Input
-                      className={formStyles.field.input}
-                      {...register("cep")}
-                      onChange={handleCepChange}
-                      maxLength={9}
-                      placeholder="00000-000"
-                    />
-                    {errors.cep && (
-                      <p className={formStyles.field.error}>
-                        {errors.cep.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="col-span-4 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; ENDERECO RESIDENCIAL
-                    </Label>
-                    <Input
-                      className={`${formStyles.field.input} h-10`}
-                      {...register("address")}
-                    />
-                    {errors.address && (
-                      <p className={formStyles.field.error}>
-                        {errors.address.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* ALERGIAS - linha inteira */}
-                  <div className="col-span-4 space-y-1.5">
-                    <Label className={formStyles.field.label}>
-                      &gt; ALERGIAS / OBSERVACOES
-                    </Label>
-                    <Input
-                      className={formStyles.field.input}
-                      {...register("allergies")}
-                      placeholder="EX: ALERGIA A PENICILINA"
-                    />
-                  </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  className={formStyles.button.primary}
-                  disabled={loading}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="p-6 space-y-4"
                 >
-                  {loading
-                    ? "[ SALVANDO REGISTRO... ]"
-                    : editingPatient
-                      ? "[ ATUALIZAR PACIENTE ]"
-                      : "[ CADASTRAR PACIENTE ]"}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  <div className="grid gap-4 sm:grid-cols-4">
+                    {/* NOME - linha inteira */}
+                    <div className="col-span-4 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; NOME COMPLETO
+                      </Label>
+                      <Input
+                        className={`${formStyles.field.input} h-10`}
+                        {...register("name")}
+                      />
+                      {errors.name && (
+                        <p className={formStyles.field.error}>
+                          {errors.name.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* CPF + RG - mesma linha */}
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>&gt; CPF</Label>
+                      <Input
+                        className={formStyles.field.input}
+                        {...register("cpf")}
+                        onChange={handleCpfChange}
+                        maxLength={14}
+                        placeholder="000.000.000-00"
+                      />
+                      {errors.cpf && (
+                        <p className={formStyles.field.error}>
+                          {errors.cpf.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>&gt; RG</Label>
+                      <Input
+                        className={formStyles.field.input}
+                        {...register("rg")}
+                        onChange={handleRgChange}
+                        maxLength={12}
+                        placeholder="XX.XXX.XXX-X"
+                      />
+                      {errors.rg && (
+                        <p className={formStyles.field.error}>
+                          {errors.rg.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* TELEFONE */}
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; TELEFONE / WHATSAPP
+                      </Label>
+                      <Input
+                        className={`${formStyles.field.input} h-10`}
+                        {...register("phone")}
+                        onChange={handlePhoneChange}
+                        maxLength={15}
+                        placeholder="(00) 00000-0000"
+                      />
+                      {errors.phone && (
+                        <p className={formStyles.field.error}>
+                          {errors.phone.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* DATA NASCIMENTO */}
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; DATA DE NASCIMENTO
+                      </Label>
+                      <Input
+                        className={`${formStyles.field.input} h-10`}
+                        type="date"
+                        {...register("birthDate")}
+                      />
+                      {errors.birthDate && (
+                        <p className={formStyles.field.error}>
+                          {errors.birthDate.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* EMAIL - linha inteira */}
+                    <div className="col-span-4 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; EMAIL
+                      </Label>
+                      <Input
+                        className={`${formStyles.field.input} h-10`}
+                        type="email"
+                        {...register("email")}
+                      />
+                    </div>
+
+                    {/* TIPO SANGUINEO + CEP mesma linha */}
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; TIPO SANGUINEO
+                      </Label>
+                      <Input
+                        className={formStyles.field.input}
+                        {...register("bloodType")}
+                        placeholder="A+, O-, B+"
+                      />
+                    </div>
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>&gt; CEP</Label>
+                      <Input
+                        className={formStyles.field.input}
+                        {...register("cep")}
+                        onChange={handleCepChange}
+                        maxLength={9}
+                        placeholder="00000-000"
+                      />
+                      {errors.cep && (
+                        <p className={formStyles.field.error}>
+                          {errors.cep.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-span-4 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; ENDERECO RESIDENCIAL
+                      </Label>
+                      <Input
+                        className={`${formStyles.field.input} h-10`}
+                        {...register("address")}
+                      />
+                      {errors.address && (
+                        <p className={formStyles.field.error}>
+                          {errors.address.message}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* ALERGIAS - linha inteira */}
+                    <div className="col-span-4 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; ALERGIAS / OBSERVACOES
+                      </Label>
+                      <Input
+                        className={formStyles.field.input}
+                        {...register("allergies")}
+                        placeholder="EX: ALERGIA A PENICILINA"
+                      />
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className={formStyles.button.primary}
+                    disabled={loading}
+                  >
+                    {loading
+                      ? "[ SALVANDO REGISTRO... ]"
+                      : editingPatient
+                        ? "[ ATUALIZAR PACIENTE ]"
+                        : "[ CADASTRAR PACIENTE ]"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -471,7 +463,9 @@ export default function PatientsPage() {
                 <TableHead className={formStyles.table.headerCell}>
                   NASCIMENTO
                 </TableHead>
-                <TableHead className={`${formStyles.table.headerCell} text-right`}>
+                <TableHead
+                  className={`${formStyles.table.headerCell} text-right`}
+                >
                   ACOES
                 </TableHead>
               </TableRow>
@@ -484,17 +478,16 @@ export default function PatientsPage() {
                   .slice(0, 2)
                   .join("");
                 return (
-                  <TableRow
-                    key={p.id}
-                    className={formStyles.table.bodyRow}
-                  >
+                  <TableRow key={p.id} className={formStyles.table.bodyRow}>
                     <TableCell className="py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 items-center justify-center bg-[#1A1A1A] border border-[#333333] font-mono text-[10px] font-bold text-[#777777]">
                           {initials}
                         </div>
                         <div>
-                          <p className={`${formStyles.table.cell} uppercase tracking-wider`}>
+                          <p
+                            className={`${formStyles.table.cell} uppercase tracking-wider`}
+                          >
                             {p.name}
                           </p>
                           {p.email && (

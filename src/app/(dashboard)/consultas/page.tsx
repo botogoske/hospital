@@ -23,14 +23,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { HiPlus, HiCalendar, HiSearch, HiPencil, HiTrash, HiDownload } from "react-icons/hi";
+import {
+  HiPlus,
+  HiCalendar,
+  HiSearch,
+  HiPencil,
+  HiTrash,
+  HiDownload,
+} from "react-icons/hi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { formStyles, statusColors, statusBadgeStyle } from "@/styles/form-styles";
+import {
+  formStyles,
+  statusColors,
+  statusBadgeStyle,
+} from "@/styles/form-styles";
 
-interface Patient { id: string; name: string; }
-interface Doctor { id: string; name: string; }
-interface HealthPlan { id: string; name: string; provider: string; }
+interface Patient {
+  id: string;
+  name: string;
+}
+interface Doctor {
+  id: string;
+  name: string;
+}
+interface HealthPlan {
+  id: string;
+  name: string;
+  provider: string;
+}
 interface Appointment {
   id: string;
   patientId: string;
@@ -71,11 +92,18 @@ export default function AppointmentsPage() {
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedHealthPlan, setSelectedHealthPlan] = useState("");
   const [search, setSearch] = useState("");
-  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
+  const [editingAppointment, setEditingAppointment] =
+    useState<Appointment | null>(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<AppointmentInput>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<AppointmentInput>({
     resolver: zodResolver(appointmentSchema),
   });
 
@@ -86,19 +114,47 @@ export default function AppointmentsPage() {
     fetchHealthPlans();
   }, []);
 
-  const fetchAppointments = async () => { const res = await fetch("/api/appointments"); if (res.ok) setAppointments(await res.json()); };
-  const fetchPatients = async () => { const res = await fetch("/api/patients"); if (res.ok) setPatients(await res.json()); };
-  const fetchDoctors = async () => { const res = await fetch("/api/doctors"); if (res.ok) setDoctors(await res.json()); };
-  const fetchHealthPlans = async () => { const res = await fetch("/api/health-plans"); if (res.ok) setHealthPlans(await res.json()); };
+  const fetchAppointments = async () => {
+    const res = await fetch("/api/appointments");
+    if (res.ok) setAppointments(await res.json());
+  };
+  const fetchPatients = async () => {
+    const res = await fetch("/api/patients");
+    if (res.ok) setPatients(await res.json());
+  };
+  const fetchDoctors = async () => {
+    const res = await fetch("/api/doctors");
+    if (res.ok) setDoctors(await res.json());
+  };
+  const fetchHealthPlans = async () => {
+    const res = await fetch("/api/health-plans");
+    if (res.ok) setHealthPlans(await res.json());
+  };
 
   const onSubmit = async (data: AppointmentInput) => {
     setLoading(true);
     try {
-      const url = editingAppointment ? `/api/appointments/${editingAppointment.id}` : "/api/appointments";
+      const url = editingAppointment
+        ? `/api/appointments/${editingAppointment.id}`
+        : "/api/appointments";
       const method = editingAppointment ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(toUpper(data)) });
-      if (res.ok) { setOpen(false); reset(); setSelectedPatient(""); setSelectedDoctor(""); setSelectedHealthPlan(""); setEditingAppointment(null); fetchAppointments(); }
-    } finally { setLoading(false); }
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toUpper(data)),
+      });
+      if (res.ok) {
+        setOpen(false);
+        reset();
+        setSelectedPatient("");
+        setSelectedDoctor("");
+        setSelectedHealthPlan("");
+        setEditingAppointment(null);
+        fetchAppointments();
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEdit = (appointment: Appointment) => {
@@ -122,7 +178,9 @@ export default function AppointmentsPage() {
 
   const handleExportPDF = () => {
     const filtered = appointments.filter((a) => {
-      const matchSearch = a.patient.name.toLowerCase().includes(search.toLowerCase());
+      const matchSearch = a.patient.name
+        .toLowerCase()
+        .includes(search.toLowerCase());
       const d = new Date(a.scheduledAt);
       const matchStart = !startDate || d >= new Date(startDate);
       const matchEnd = !endDate || d <= new Date(endDate + "T23:59:59");
@@ -134,14 +192,20 @@ export default function AppointmentsPage() {
     doc.setFontSize(10);
     doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")}`, 14, 30);
     const tableData = filtered.map((a) => [
-      a.patient.name, a.doctor.name, a.doctor.specialty.name,
-      a.healthPlan ? `${a.healthPlan.name} (${a.healthPlan.provider})` : "Particular",
+      a.patient.name,
+      a.doctor.name,
+      a.doctor.specialty.name,
+      a.healthPlan
+        ? `${a.healthPlan.name} (${a.healthPlan.provider})`
+        : "Particular",
       new Date(a.scheduledAt).toLocaleString("pt-BR"),
       statusLabels[a.status] || a.status,
     ]);
     autoTable(doc, {
       startY: 36,
-      head: [["Paciente", "Medico", "Especialidade", "Plano", "Data/Hora", "Status"]],
+      head: [
+        ["Paciente", "Medico", "Especialidade", "Plano", "Data/Hora", "Status"],
+      ],
       body: tableData,
       styles: { fontSize: 8 },
       headStyles: { fillColor: [230, 25, 25] },
@@ -160,11 +224,16 @@ export default function AppointmentsPage() {
             </div>
             <div>
               <h1 className={formStyles.header.title}>CONSULTAS</h1>
-              <p className={formStyles.header.subtitle}>AGENDAMENTO DE CONSULTAS MEDICAS</p>
+              <p className={formStyles.header.subtitle}>
+                AGENDAMENTO DE CONSULTAS MEDICAS
+              </p>
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={handleExportPDF} className={formStyles.button.export}>
+            <button
+              onClick={handleExportPDF}
+              className={formStyles.button.export}
+            >
               <HiDownload className="h-3.5 w-3.5" />
               EXPORTAR PDF
             </button>
@@ -178,47 +247,120 @@ export default function AppointmentsPage() {
               <DialogContent className={formStyles.dialog.content}>
                 <DialogHeader className={formStyles.dialog.header}>
                   <DialogTitle className={formStyles.dialog.title}>
-                    {editingAppointment ? "[ EDITAR ] CONSULTA" : "[ NOVO ] AGENDAR CONSULTA"}
+                    {editingAppointment
+                      ? "[ EDITAR ] CONSULTA"
+                      : "[ NOVO ] AGENDAR CONSULTA"}
                   </DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="p-6 space-y-4"
+                >
                   <div className={formStyles.field.wrapper}>
-                    <Label className={formStyles.field.label}>&gt; PACIENTE</Label>
-                    <select value={selectedPatient} onChange={(e) => { setSelectedPatient(e.target.value); setValue("patientId", e.target.value); }}
-                      className={formStyles.field.select}>
+                    <Label className={formStyles.field.label}>
+                      &gt; PACIENTE
+                    </Label>
+                    <select
+                      value={selectedPatient}
+                      onChange={(e) => {
+                        setSelectedPatient(e.target.value);
+                        setValue("patientId", e.target.value);
+                      }}
+                      className={formStyles.field.select}
+                    >
                       <option value="">SELECIONE O PACIENTE...</option>
-                      {patients.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                      {patients.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
                     </select>
-                    {errors.patientId && <p className={formStyles.field.error}>{errors.patientId.message}</p>}
+                    {errors.patientId && (
+                      <p className={formStyles.field.error}>
+                        {errors.patientId.message}
+                      </p>
+                    )}
                   </div>
                   <div className={formStyles.field.wrapper}>
-                    <Label className={formStyles.field.label}>&gt; MEDICO</Label>
-                    <select value={selectedDoctor} onChange={(e) => { setSelectedDoctor(e.target.value); setValue("doctorId", e.target.value); }}
-                      className={formStyles.field.select}>
+                    <Label className={formStyles.field.label}>
+                      &gt; MEDICO
+                    </Label>
+                    <select
+                      value={selectedDoctor}
+                      onChange={(e) => {
+                        setSelectedDoctor(e.target.value);
+                        setValue("doctorId", e.target.value);
+                      }}
+                      className={formStyles.field.select}
+                    >
                       <option value="">SELECIONE O MEDICO...</option>
-                      {doctors.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+                      {doctors.map((d) => (
+                        <option key={d.id} value={d.id}>
+                          {d.name}
+                        </option>
+                      ))}
                     </select>
-                    {errors.doctorId && <p className={formStyles.field.error}>{errors.doctorId.message}</p>}
+                    {errors.doctorId && (
+                      <p className={formStyles.field.error}>
+                        {errors.doctorId.message}
+                      </p>
+                    )}
                   </div>
                   <div className={formStyles.field.wrapper}>
-                    <Label className={formStyles.field.label}>&gt; DATA E HORA</Label>
-                    <Input type="datetime-local" {...register("scheduledAt")} className={formStyles.field.input} />
-                    {errors.scheduledAt && <p className={formStyles.field.error}>{errors.scheduledAt.message}</p>}
+                    <Label className={formStyles.field.label}>
+                      &gt; DATA E HORA
+                    </Label>
+                    <Input
+                      type="datetime-local"
+                      {...register("scheduledAt")}
+                      className={formStyles.field.input}
+                    />
+                    {errors.scheduledAt && (
+                      <p className={formStyles.field.error}>
+                        {errors.scheduledAt.message}
+                      </p>
+                    )}
                   </div>
                   <div className={formStyles.field.wrapper}>
-                    <Label className={formStyles.field.label}>&gt; OBSERVACOES</Label>
-                    <Input {...register("notes")} placeholder="OPCIONAL" className={formStyles.field.input} />
+                    <Label className={formStyles.field.label}>
+                      &gt; OBSERVACOES
+                    </Label>
+                    <Input
+                      {...register("notes")}
+                      placeholder="OPCIONAL"
+                      className={formStyles.field.input}
+                    />
                   </div>
                   <div className={formStyles.field.wrapper}>
-                    <Label className={formStyles.field.label}>&gt; PLANO DE SAUDE</Label>
-                    <select value={selectedHealthPlan} onChange={(e) => { setSelectedHealthPlan(e.target.value); setValue("healthPlanId", e.target.value || undefined); }}
-                      className={formStyles.field.select}>
+                    <Label className={formStyles.field.label}>
+                      &gt; PLANO DE SAUDE
+                    </Label>
+                    <select
+                      value={selectedHealthPlan}
+                      onChange={(e) => {
+                        setSelectedHealthPlan(e.target.value);
+                        setValue("healthPlanId", e.target.value || undefined);
+                      }}
+                      className={formStyles.field.select}
+                    >
                       <option value="">PARTICULAR (SEM CONVENIO)</option>
-                      {healthPlans.map((hp) => <option key={hp.id} value={hp.id}>{hp.name} ({hp.provider})</option>)}
+                      {healthPlans.map((hp) => (
+                        <option key={hp.id} value={hp.id}>
+                          {hp.name} ({hp.provider})
+                        </option>
+                      ))}
                     </select>
                   </div>
-                  <Button type="submit" className={formStyles.button.primary} disabled={loading}>
-                    {loading ? "[ SALVANDO... ]" : editingAppointment ? "[ ATUALIZAR CONSULTA ]" : "[ AGENDAR CONSULTA ]"}
+                  <Button
+                    type="submit"
+                    className={formStyles.button.primary}
+                    disabled={loading}
+                  >
+                    {loading
+                      ? "[ SALVANDO... ]"
+                      : editingAppointment
+                        ? "[ ATUALIZAR CONSULTA ]"
+                        : "[ AGENDAR CONSULTA ]"}
                   </Button>
                 </form>
               </DialogContent>
@@ -230,21 +372,41 @@ export default function AppointmentsPage() {
       {/* Table */}
       <div className={formStyles.section.container}>
         <div className={formStyles.section.header}>
-          <span className={formStyles.section.title}>[ CONSULTAS AGENDADAS ]</span>
+          <span className={formStyles.section.title}>
+            [ CONSULTAS AGENDADAS ]
+          </span>
           <div className="flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
               <HiSearch className={formStyles.search.icon} />
-              <input placeholder="BUSCAR POR NOME DO PACIENTE..." value={search} onChange={(e) => setSearch(e.target.value)}
-                className={formStyles.search.input} />
+              <input
+                placeholder="BUSCAR POR NOME DO PACIENTE..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={formStyles.search.input}
+              />
             </div>
             <div className="flex gap-2">
               <div className="flex items-center gap-2">
-                <Label className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555]">DE:</Label>
-                <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-36 rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-[10px] text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
+                <Label className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555]">
+                  DE:
+                </Label>
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-36 rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-[10px] text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                />
               </div>
               <div className="flex items-center gap-2">
-                <Label className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555]">ATE:</Label>
-                <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-36 rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-[10px] text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
+                <Label className="whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555]">
+                  ATE:
+                </Label>
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-36 rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-[10px] text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                />
               </div>
             </div>
           </div>
@@ -253,58 +415,109 @@ export default function AppointmentsPage() {
           <Table>
             <TableHeader>
               <TableRow className={formStyles.table.headerRow}>
-                <TableHead className={formStyles.table.headerCell}>PACIENTE</TableHead>
-                <TableHead className={formStyles.table.headerCell}>MEDICO</TableHead>
-                <TableHead className={formStyles.table.headerCell}>ESPECIALIDADE</TableHead>
-                <TableHead className={formStyles.table.headerCell}>PLANO</TableHead>
-                <TableHead className={formStyles.table.headerCell}>DATA/HORA</TableHead>
-                <TableHead className={formStyles.table.headerCell}>STATUS</TableHead>
-                <TableHead className={`${formStyles.table.headerCell} text-right`}>ACOES</TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  PACIENTE
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  MEDICO
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  ESPECIALIDADE
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  PLANO
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  DATA/HORA
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  STATUS
+                </TableHead>
+                <TableHead
+                  className={`${formStyles.table.headerCell} text-right`}
+                >
+                  ACOES
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {appointments
                 .filter((a) => {
-                  const matchSearch = a.patient.name.toLowerCase().includes(search.toLowerCase());
+                  const matchSearch = a.patient.name
+                    .toLowerCase()
+                    .includes(search.toLowerCase());
                   const d = new Date(a.scheduledAt);
-                  return matchSearch && (!startDate || d >= new Date(startDate)) && (!endDate || d <= new Date(endDate + "T23:59:59"));
+                  return (
+                    matchSearch &&
+                    (!startDate || d >= new Date(startDate)) &&
+                    (!endDate || d <= new Date(endDate + "T23:59:59"))
+                  );
                 })
                 .map((a) => (
-                <TableRow key={a.id} className={formStyles.table.bodyRow}>
-                  <TableCell className={`${formStyles.table.cell} uppercase`}>{a.patient.name}</TableCell>
-                  <TableCell className={`${formStyles.table.cell} uppercase`}>{a.doctor.name}</TableCell>
-                  <TableCell className={formStyles.table.cellMuted}>{a.doctor.specialty.name}</TableCell>
-                  <TableCell className={`${formStyles.table.cell} uppercase`}>
-                    {a.healthPlan ? a.healthPlan.name : <span className="text-[#444444]">PARTICULAR</span>}
-                  </TableCell>
-                  <TableCell className={formStyles.table.cell}>
-                    {new Date(a.scheduledAt).toLocaleString("pt-BR")}
-                  </TableCell>
-                  <TableCell>
-                    <span className={`${statusBadgeStyle} ${statusColors[a.status.toLowerCase() as keyof typeof statusColors] || "border-l-[#333333]"}`}>
-                      [ {statusLabels[a.status] || a.status} ]
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-1">
-                      <button className={formStyles.button.edit} onClick={() => handleEdit(a)}>
-                        <HiPencil className="h-3.5 w-3.5" />
-                      </button>
-                      <button className={formStyles.button.delete} onClick={() => handleDelete(a.id)}>
-                        <HiTrash className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+                  <TableRow key={a.id} className={formStyles.table.bodyRow}>
+                    <TableCell className={`${formStyles.table.cell} uppercase`}>
+                      {a.patient.name}
+                    </TableCell>
+                    <TableCell className={`${formStyles.table.cell} uppercase`}>
+                      {a.doctor.name}
+                    </TableCell>
+                    <TableCell className={formStyles.table.cellMuted}>
+                      {a.doctor.specialty.name}
+                    </TableCell>
+                    <TableCell className={`${formStyles.table.cell} uppercase`}>
+                      {a.healthPlan ? (
+                        a.healthPlan.name
+                      ) : (
+                        <span className="text-[#444444]">PARTICULAR</span>
+                      )}
+                    </TableCell>
+                    <TableCell className={formStyles.table.cell}>
+                      {new Date(a.scheduledAt).toLocaleString("pt-BR")}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`${statusBadgeStyle} ${statusColors[a.status.toLowerCase() as keyof typeof statusColors] || "border-l-[#333333]"}`}
+                      >
+                        [ {statusLabels[a.status] || a.status} ]
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        <button
+                          className={formStyles.button.edit}
+                          onClick={() => handleEdit(a)}
+                        >
+                          <HiPencil className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          className={formStyles.button.delete}
+                          onClick={() => handleDelete(a.id)}
+                        >
+                          <HiTrash className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
               {appointments.filter((a) => {
-                const matchSearch = a.patient.name.toLowerCase().includes(search.toLowerCase());
+                const matchSearch = a.patient.name
+                  .toLowerCase()
+                  .includes(search.toLowerCase());
                 const d = new Date(a.scheduledAt);
-                return matchSearch && (!startDate || d >= new Date(startDate)) && (!endDate || d <= new Date(endDate + "T23:59:59"));
+                return (
+                  matchSearch &&
+                  (!startDate || d >= new Date(startDate)) &&
+                  (!endDate || d <= new Date(endDate + "T23:59:59"))
+                );
               }).length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className={formStyles.table.emptyState}>
-                    {(search || startDate || endDate) ? "NENHUM RESULTADO ENCONTRADO" : "NENHUMA CONSULTA AGENDADA"}
+                  <TableCell
+                    colSpan={7}
+                    className={formStyles.table.emptyState}
+                  >
+                    {search || startDate || endDate
+                      ? "NENHUM RESULTADO ENCONTRADO"
+                      : "NENHUMA CONSULTA AGENDADA"}
                   </TableCell>
                 </TableRow>
               )}

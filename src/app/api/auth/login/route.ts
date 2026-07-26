@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json(
         { error: "Credenciais inválidas" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     if (!validPassword) {
       return NextResponse.json(
         { error: "Credenciais inválidas" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json(
       { error: "Erro ao processar requisição" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

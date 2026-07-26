@@ -25,9 +25,7 @@ export async function POST(request: Request) {
     return NextResponse.json(schedule, { status: 201 });
   } catch (error: unknown) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao agendar cirurgia";
+      error instanceof Error ? error.message : "Erro ao agendar cirurgia";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -18,21 +18,23 @@ export async function PUT(
         notes: data.notes,
         status: data.status,
       },
-      include: { patient: true, doctor: { include: { specialty: true } }, healthPlan: true },
+      include: {
+        patient: true,
+        doctor: { include: { specialty: true } },
+        healthPlan: true,
+      },
     });
     return NextResponse.json(appointment);
   } catch (error: unknown) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao atualizar consulta";
+      error instanceof Error ? error.message : "Erro ao atualizar consulta";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -42,9 +44,7 @@ export async function DELETE(
     return NextResponse.json({ message: "Consulta excluída com sucesso" });
   } catch (error: unknown) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao excluir consulta";
+      error instanceof Error ? error.message : "Erro ao excluir consulta";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

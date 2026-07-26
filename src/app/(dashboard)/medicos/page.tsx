@@ -37,8 +37,20 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formStyles } from "@/styles/form-styles";
 
-interface Doctor { id: string; name: string; cpf: string; crm: string; phone: string; email: string; specialtyId: string; specialty: { id: string; name: string }; }
-interface Specialty { id: string; name: string; }
+interface Doctor {
+  id: string;
+  name: string;
+  cpf: string;
+  crm: string;
+  phone: string;
+  email: string;
+  specialtyId: string;
+  specialty: { id: string; name: string };
+}
+interface Specialty {
+  id: string;
+  name: string;
+}
 
 export default function DoctorsPage() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -48,36 +60,75 @@ export default function DoctorsPage() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
 
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<DoctorInput>({ resolver: zodResolver(doctorSchema) });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<DoctorInput>({ resolver: zodResolver(doctorSchema) });
 
-  const handleCpfChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("cpf", maskCpf(e.target.value), { shouldValidate: true });
-  }, [setValue]);
+  const handleCpfChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("cpf", maskCpf(e.target.value), { shouldValidate: true });
+    },
+    [setValue],
+  );
 
-  const handlePhoneChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue("phone", maskPhone(e.target.value), { shouldValidate: true });
-  }, [setValue]);
+  const handlePhoneChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("phone", maskPhone(e.target.value), { shouldValidate: true });
+    },
+    [setValue],
+  );
 
-  useEffect(() => { fetchDoctors(); fetchSpecialties(); }, []);
+  useEffect(() => {
+    fetchDoctors();
+    fetchSpecialties();
+  }, []);
 
-  const fetchDoctors = async () => { const res = await fetch("/api/doctors"); if (res.ok) setDoctors(await res.json()); };
-  const fetchSpecialties = async () => { const res = await fetch("/api/specialties"); if (res.ok) setSpecialties(await res.json()); };
+  const fetchDoctors = async () => {
+    const res = await fetch("/api/doctors");
+    if (res.ok) setDoctors(await res.json());
+  };
+  const fetchSpecialties = async () => {
+    const res = await fetch("/api/specialties");
+    if (res.ok) setSpecialties(await res.json());
+  };
 
   const onSubmit = async (data: DoctorInput) => {
     setLoading(true);
     try {
-      const url = editingDoctor ? `/api/doctors/${editingDoctor.id}` : "/api/doctors";
+      const url = editingDoctor
+        ? `/api/doctors/${editingDoctor.id}`
+        : "/api/doctors";
       const method = editingDoctor ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(toUpper(data)) });
-      if (res.ok) { setOpen(false); reset(); setSelectedSpecialty(""); setEditingDoctor(null); fetchDoctors(); }
-    } finally { setLoading(false); }
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(toUpper(data)),
+      });
+      if (res.ok) {
+        setOpen(false);
+        reset();
+        setSelectedSpecialty("");
+        setEditingDoctor(null);
+        fetchDoctors();
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEdit = (doctor: Doctor) => {
     setEditingDoctor(doctor);
     setSelectedSpecialty(doctor.specialtyId);
-    setValue("name", doctor.name); setValue("cpf", doctor.cpf); setValue("crm", doctor.crm);
-    setValue("phone", doctor.phone); setValue("email", doctor.email); setValue("specialtyId", doctor.specialtyId);
+    setValue("name", doctor.name);
+    setValue("cpf", doctor.cpf);
+    setValue("crm", doctor.crm);
+    setValue("phone", doctor.phone);
+    setValue("email", doctor.email);
+    setValue("specialtyId", doctor.specialtyId);
     setOpen(true);
   };
 
@@ -122,44 +173,175 @@ export default function DoctorsPage() {
       <div className={formStyles.header.container}>
         <div className={formStyles.header.row}>
           <div className="flex items-center gap-4">
-            <div className={formStyles.header.iconBox}><FaUserMd className="h-5 w-5" /></div>
+            <div className={formStyles.header.iconBox}>
+              <FaUserMd className="h-5 w-5" />
+            </div>
             <div>
               <h1 className={formStyles.header.title}>MEDICOS</h1>
-              <p className={formStyles.header.subtitle}>GERENCIE OS MEDICOS DO HOSPITAL</p>
+              <p className={formStyles.header.subtitle}>
+                GERENCIE OS MEDICOS DO HOSPITAL
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={exportPdf} className={formStyles.button.export}><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
-            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setSelectedSpecialty(""); setEditingDoctor(null); } }}>
-            <DialogTrigger render={<Button />}>
-              <span className={formStyles.button.trigger}><HiPlus className="h-3.5 w-3.5" /> NOVO MEDICO</span>
-            </DialogTrigger>
-            <DialogContent className={formStyles.dialog.content}>
-              <DialogHeader className={formStyles.dialog.header}>
-                <DialogTitle className={formStyles.dialog.title}>{editingDoctor ? "[ EDITAR ] MEDICO" : "[ NOVO ] CADASTRAR MEDICO"}</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; NOME</Label><Input {...register("name")} className={formStyles.field.input} />{errors.name && <p className={formStyles.field.error}>{errors.name.message}</p>}</div>
-                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; CPF</Label><Input {...register("cpf")} onChange={handleCpfChange} maxLength={14} placeholder="000.000.000-00" className={formStyles.field.input} />{errors.cpf && <p className={formStyles.field.error}>{errors.cpf.message}</p>}</div>
-                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; CRM</Label><Input {...register("crm")} placeholder="CRM-00000" className={formStyles.field.input} />{errors.crm && <p className={formStyles.field.error}>{errors.crm.message}</p>}</div>
-                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; TELEFONE</Label><Input {...register("phone")} onChange={handlePhoneChange} maxLength={15} placeholder="(00) 00000-0000" className={formStyles.field.input} />{errors.phone && <p className={formStyles.field.error}>{errors.phone.message}</p>}</div>
-                  <div className="col-span-2 space-y-1.5"><Label className={formStyles.field.label}>&gt; EMAIL</Label><Input type="email" {...register("email")} className={formStyles.field.input} />{errors.email && <p className={formStyles.field.error}>{errors.email.message}</p>}</div>
-                  <div className="col-span-2 space-y-1.5">
-                    <Label className={formStyles.field.label}>&gt; ESPECIALIDADE</Label>
-                    <Select value={selectedSpecialty} onValueChange={(value) => { if (!value) return; setSelectedSpecialty(value); setValue("specialtyId", value); }} items={specialties.map((s) => ({ value: s.id, label: s.name }))}>
-                      <SelectTrigger className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919]"><SelectValue placeholder="SELECIONE..." /></SelectTrigger>
-                      <SelectContent className="rounded-none border-[#333333] bg-[#111111]">{specialties.map((s) => <SelectItem key={s.id} value={s.id} className="font-mono text-xs">{s.name}</SelectItem>)}</SelectContent>
-                    </Select>
-                    {errors.specialtyId && <p className={formStyles.field.error}>{errors.specialtyId.message}</p>}
+            <button onClick={exportPdf} className={formStyles.button.export}>
+              <HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF
+            </button>
+            <Dialog
+              open={open}
+              onOpenChange={(v) => {
+                setOpen(v);
+                if (!v) {
+                  reset();
+                  setSelectedSpecialty("");
+                  setEditingDoctor(null);
+                }
+              }}
+            >
+              <DialogTrigger render={<Button />}>
+                <span className={formStyles.button.trigger}>
+                  <HiPlus className="h-3.5 w-3.5" /> NOVO MEDICO
+                </span>
+              </DialogTrigger>
+              <DialogContent className={formStyles.dialog.content}>
+                <DialogHeader className={formStyles.dialog.header}>
+                  <DialogTitle className={formStyles.dialog.title}>
+                    {editingDoctor
+                      ? "[ EDITAR ] MEDICO"
+                      : "[ NOVO ] CADASTRAR MEDICO"}
+                  </DialogTitle>
+                </DialogHeader>
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="p-6 space-y-4"
+                >
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className={formStyles.field.wrapper}>
+                      <Label className={formStyles.field.label}>
+                        &gt; NOME
+                      </Label>
+                      <Input
+                        {...register("name")}
+                        className={formStyles.field.input}
+                      />
+                      {errors.name && (
+                        <p className={formStyles.field.error}>
+                          {errors.name.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className={formStyles.field.wrapper}>
+                      <Label className={formStyles.field.label}>&gt; CPF</Label>
+                      <Input
+                        {...register("cpf")}
+                        onChange={handleCpfChange}
+                        maxLength={14}
+                        placeholder="000.000.000-00"
+                        className={formStyles.field.input}
+                      />
+                      {errors.cpf && (
+                        <p className={formStyles.field.error}>
+                          {errors.cpf.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className={formStyles.field.wrapper}>
+                      <Label className={formStyles.field.label}>&gt; CRM</Label>
+                      <Input
+                        {...register("crm")}
+                        placeholder="CRM-00000"
+                        className={formStyles.field.input}
+                      />
+                      {errors.crm && (
+                        <p className={formStyles.field.error}>
+                          {errors.crm.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className={formStyles.field.wrapper}>
+                      <Label className={formStyles.field.label}>
+                        &gt; TELEFONE
+                      </Label>
+                      <Input
+                        {...register("phone")}
+                        onChange={handlePhoneChange}
+                        maxLength={15}
+                        placeholder="(00) 00000-0000"
+                        className={formStyles.field.input}
+                      />
+                      {errors.phone && (
+                        <p className={formStyles.field.error}>
+                          {errors.phone.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; EMAIL
+                      </Label>
+                      <Input
+                        type="email"
+                        {...register("email")}
+                        className={formStyles.field.input}
+                      />
+                      {errors.email && (
+                        <p className={formStyles.field.error}>
+                          {errors.email.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-span-2 space-y-1.5">
+                      <Label className={formStyles.field.label}>
+                        &gt; ESPECIALIDADE
+                      </Label>
+                      <Select
+                        value={selectedSpecialty}
+                        onValueChange={(value) => {
+                          if (!value) return;
+                          setSelectedSpecialty(value);
+                          setValue("specialtyId", value);
+                        }}
+                        items={specialties.map((s) => ({
+                          value: s.id,
+                          label: s.name,
+                        }))}
+                      >
+                        <SelectTrigger className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919]">
+                          <SelectValue placeholder="SELECIONE..." />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-none border-[#333333] bg-[#111111]">
+                          {specialties.map((s) => (
+                            <SelectItem
+                              key={s.id}
+                              value={s.id}
+                              className="font-mono text-xs"
+                            >
+                              {s.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.specialtyId && (
+                        <p className={formStyles.field.error}>
+                          {errors.specialtyId.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <Button type="submit" className={formStyles.button.primary} disabled={loading}>
-                  {loading ? "[ SALVANDO... ]" : editingDoctor ? "[ ATUALIZAR ]" : "[ CADASTRAR ]"}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  <Button
+                    type="submit"
+                    className={formStyles.button.primary}
+                    disabled={loading}
+                  >
+                    {loading
+                      ? "[ SALVANDO... ]"
+                      : editingDoctor
+                        ? "[ ATUALIZAR ]"
+                        : "[ CADASTRAR ]"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -172,29 +354,68 @@ export default function DoctorsPage() {
           <Table>
             <TableHeader>
               <TableRow className={formStyles.table.headerRow}>
-                <TableHead className={formStyles.table.headerCell}>NOME</TableHead>
-                <TableHead className={formStyles.table.headerCell}>CRM</TableHead>
-                <TableHead className={formStyles.table.headerCell}>TELEFONE</TableHead>
-                <TableHead className={formStyles.table.headerCell}>ESPECIALIDADE</TableHead>
-                <TableHead className={`${formStyles.table.headerCell} text-right`}>ACOES</TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  NOME
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  CRM
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  TELEFONE
+                </TableHead>
+                <TableHead className={formStyles.table.headerCell}>
+                  ESPECIALIDADE
+                </TableHead>
+                <TableHead
+                  className={`${formStyles.table.headerCell} text-right`}
+                >
+                  ACOES
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {doctors.map((d) => (
                 <TableRow key={d.id} className={formStyles.table.bodyRow}>
-                  <TableCell className={`${formStyles.table.cell} uppercase`}>{d.name}</TableCell>
-                  <TableCell className={formStyles.table.cell}>{d.crm}</TableCell>
-                  <TableCell className={formStyles.table.cell}>{d.phone}</TableCell>
-                  <TableCell className={formStyles.table.cellMuted}>{d.specialty.name}</TableCell>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>
+                    {d.name}
+                  </TableCell>
+                  <TableCell className={formStyles.table.cell}>
+                    {d.crm}
+                  </TableCell>
+                  <TableCell className={formStyles.table.cell}>
+                    {d.phone}
+                  </TableCell>
+                  <TableCell className={formStyles.table.cellMuted}>
+                    {d.specialty.name}
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <button className={formStyles.button.edit} onClick={() => handleEdit(d)}><HiPencil className="h-3.5 w-3.5" /></button>
-                      <button className={formStyles.button.delete} onClick={() => handleDelete(d.id)}><HiTrash className="h-3.5 w-3.5" /></button>
+                      <button
+                        className={formStyles.button.edit}
+                        onClick={() => handleEdit(d)}
+                      >
+                        <HiPencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        className={formStyles.button.delete}
+                        onClick={() => handleDelete(d.id)}
+                      >
+                        <HiTrash className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              {doctors.length === 0 && <TableRow><TableCell colSpan={5} className={formStyles.table.emptyState}>NENHUM MEDICO CADASTRADO</TableCell></TableRow>}
+              {doctors.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={5}
+                    className={formStyles.table.emptyState}
+                  >
+                    NENHUM MEDICO CADASTRADO
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>

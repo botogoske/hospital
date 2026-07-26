@@ -159,7 +159,16 @@ export default function MedicalRecordsPage() {
     );
     autoTable(doc, {
       startY: 28,
-      head: [["PACIENTE", "MEDICO", "DIAGNOSTICO", "TRATAMENTO", "DATA", "OBSERVACOES"]],
+      head: [
+        [
+          "PACIENTE",
+          "MEDICO",
+          "DIAGNOSTICO",
+          "TRATAMENTO",
+          "DATA",
+          "OBSERVACOES",
+        ],
+      ],
       body: records.map((r) => [
         r.patient.name,
         r.doctor.name,
@@ -184,16 +193,16 @@ export default function MedicalRecordsPage() {
               <FaNotesMedical className="h-5 w-5" />
             </div>
             <div>
-              <h1 className={formStyles.header.title}>
-                PRONTUARIOS
-              </h1>
+              <h1 className={formStyles.header.title}>PRONTUARIOS</h1>
               <p className={formStyles.header.subtitle}>
                 REGISTROS MEDICOS DOS PACIENTES
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={exportPdf} className={formStyles.button.export}><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <button onClick={exportPdf} className={formStyles.button.export}>
+              <HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF
+            </button>
             <Dialog
               open={open}
               onOpenChange={(v) => {
@@ -206,146 +215,149 @@ export default function MedicalRecordsPage() {
                 }
               }}
             >
-            <DialogTrigger render={<Button />}>
-              <span className={formStyles.button.trigger}>
-                <HiPlus className="h-3.5 w-3.5" /> NOVO PRONTUARIO
-              </span>
-            </DialogTrigger>
-            <DialogContent className={formStyles.dialog.content}>
-              <DialogHeader className={formStyles.dialog.header}>
-                <DialogTitle className={formStyles.dialog.title}>
-                  {editingRecord
-                    ? "[ EDITAR ] PRONTUARIO"
-                    : "[ NOVO ] CADASTRAR PRONTUARIO"}
-                </DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-                <div className="flex-1 space-y-1.5">
-                  <Label className={formStyles.field.label}>
-                    &gt; PACIENTE
-                  </Label>
-                  <Select
-                    value={selectedPatient}
-                    onValueChange={(v) => {
-                      if (!v) return;
-                      setSelectedPatient(v);
-                      setValue("patientId", v);
-                    }}
-                    items={patients.map((p) => ({
-                      value: p.id,
-                      label: p.name,
-                    }))}
-                  >
-                    <SelectTrigger className="w-full rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA]">
-                      <SelectValue placeholder="SELECIONE O PACIENTE..." />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-none border-[#333333] bg-[#111111]">
-                      {patients.map((p) => (
-                        <SelectItem
-                          key={p.id}
-                          value={p.id}
-                          className="font-mono text-xs"
-                        >
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.patientId && (
-                    <p className={formStyles.field.error}>
-                      {errors.patientId.message}
-                    </p>
-                  )}
-                </div>
-                <div className="flex-1 space-y-1.5">
-                  <Label className={formStyles.field.label}>
-                    &gt; MEDICO
-                  </Label>
-                  <Select
-                    value={selectedDoctor}
-                    onValueChange={(v) => {
-                      if (!v) return;
-                      setSelectedDoctor(v);
-                      setValue("doctorId", v);
-                    }}
-                    items={doctors.map((d) => ({
-                      value: d.id,
-                      label: d.name,
-                    }))}
-                  >
-                    <SelectTrigger className="w-full rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA]">
-                      <SelectValue placeholder="SELECIONE O MEDICO..." />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-none border-[#333333] bg-[#111111]">
-                      {doctors.map((d) => (
-                        <SelectItem
-                          key={d.id}
-                          value={d.id}
-                          className="font-mono text-xs"
-                        >
-                          {d.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.doctorId && (
-                    <p className={formStyles.field.error}>
-                      {errors.doctorId.message}
-                    </p>
-                  )}
-                </div>
-                <div className={formStyles.field.wrapper}>
-                  <Label className={formStyles.field.label}>
-                    &gt; DIAGNOSTICO
-                  </Label>
-                  <Input
-                    {...register("diagnosis")}
-                    className={formStyles.field.input}
-                  />
-                  {errors.diagnosis && (
-                    <p className={formStyles.field.error}>
-                      {errors.diagnosis.message}
-                    </p>
-                  )}
-                </div>
-                <div className={formStyles.field.wrapper}>
-                  <Label className={formStyles.field.label}>
-                    &gt; TRATAMENTO
-                  </Label>
-                  <Input
-                    {...register("treatment")}
-                    className={formStyles.field.input}
-                  />
-                  {errors.treatment && (
-                    <p className={formStyles.field.error}>
-                      {errors.treatment.message}
-                    </p>
-                  )}
-                </div>
-                <div className={formStyles.field.wrapper}>
-                  <Label className={formStyles.field.label}>
-                    &gt; OBSERVACOES
-                  </Label>
-                  <Input
-                    {...register("notes")}
-                    placeholder="OPCIONAL"
-                    className={formStyles.field.input}
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className={formStyles.button.primary}
-                  disabled={loading}
+              <DialogTrigger render={<Button />}>
+                <span className={formStyles.button.trigger}>
+                  <HiPlus className="h-3.5 w-3.5" /> NOVO PRONTUARIO
+                </span>
+              </DialogTrigger>
+              <DialogContent className={formStyles.dialog.content}>
+                <DialogHeader className={formStyles.dialog.header}>
+                  <DialogTitle className={formStyles.dialog.title}>
+                    {editingRecord
+                      ? "[ EDITAR ] PRONTUARIO"
+                      : "[ NOVO ] CADASTRAR PRONTUARIO"}
+                  </DialogTitle>
+                </DialogHeader>
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="p-6 space-y-4"
                 >
-                  {loading
-                    ? "[ SALVANDO... ]"
-                    : editingRecord
-                      ? "[ ATUALIZAR ]"
-                      : "[ CADASTRAR ]"}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+                  <div className="flex-1 space-y-1.5">
+                    <Label className={formStyles.field.label}>
+                      &gt; PACIENTE
+                    </Label>
+                    <Select
+                      value={selectedPatient}
+                      onValueChange={(v) => {
+                        if (!v) return;
+                        setSelectedPatient(v);
+                        setValue("patientId", v);
+                      }}
+                      items={patients.map((p) => ({
+                        value: p.id,
+                        label: p.name,
+                      }))}
+                    >
+                      <SelectTrigger className="w-full rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA]">
+                        <SelectValue placeholder="SELECIONE O PACIENTE..." />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-none border-[#333333] bg-[#111111]">
+                        {patients.map((p) => (
+                          <SelectItem
+                            key={p.id}
+                            value={p.id}
+                            className="font-mono text-xs"
+                          >
+                            {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.patientId && (
+                      <p className={formStyles.field.error}>
+                        {errors.patientId.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-1.5">
+                    <Label className={formStyles.field.label}>
+                      &gt; MEDICO
+                    </Label>
+                    <Select
+                      value={selectedDoctor}
+                      onValueChange={(v) => {
+                        if (!v) return;
+                        setSelectedDoctor(v);
+                        setValue("doctorId", v);
+                      }}
+                      items={doctors.map((d) => ({
+                        value: d.id,
+                        label: d.name,
+                      }))}
+                    >
+                      <SelectTrigger className="w-full rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA]">
+                        <SelectValue placeholder="SELECIONE O MEDICO..." />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-none border-[#333333] bg-[#111111]">
+                        {doctors.map((d) => (
+                          <SelectItem
+                            key={d.id}
+                            value={d.id}
+                            className="font-mono text-xs"
+                          >
+                            {d.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.doctorId && (
+                      <p className={formStyles.field.error}>
+                        {errors.doctorId.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>
+                      &gt; DIAGNOSTICO
+                    </Label>
+                    <Input
+                      {...register("diagnosis")}
+                      className={formStyles.field.input}
+                    />
+                    {errors.diagnosis && (
+                      <p className={formStyles.field.error}>
+                        {errors.diagnosis.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>
+                      &gt; TRATAMENTO
+                    </Label>
+                    <Input
+                      {...register("treatment")}
+                      className={formStyles.field.input}
+                    />
+                    {errors.treatment && (
+                      <p className={formStyles.field.error}>
+                        {errors.treatment.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>
+                      &gt; OBSERVACOES
+                    </Label>
+                    <Input
+                      {...register("notes")}
+                      placeholder="OPCIONAL"
+                      className={formStyles.field.input}
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    className={formStyles.button.primary}
+                    disabled={loading}
+                  >
+                    {loading
+                      ? "[ SALVANDO... ]"
+                      : editingRecord
+                        ? "[ ATUALIZAR ]"
+                        : "[ CADASTRAR ]"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -375,17 +387,16 @@ export default function MedicalRecordsPage() {
                 <TableHead className={formStyles.table.headerCell}>
                   DATA
                 </TableHead>
-                <TableHead className={`${formStyles.table.headerCell} text-right`}>
+                <TableHead
+                  className={`${formStyles.table.headerCell} text-right`}
+                >
                   ACOES
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {records.map((r) => (
-                <TableRow
-                  key={r.id}
-                  className={formStyles.table.bodyRow}
-                >
+                <TableRow key={r.id} className={formStyles.table.bodyRow}>
                   <TableCell className={`${formStyles.table.cell} uppercase`}>
                     {r.patient.name}
                   </TableCell>

@@ -13,7 +13,8 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     data.admissionDate = new Date(data.admissionDate);
-    if (data.predictedDischargeDate) data.predictedDischargeDate = new Date(data.predictedDischargeDate);
+    if (data.predictedDischargeDate)
+      data.predictedDischargeDate = new Date(data.predictedDischargeDate);
     const admission = await prisma.$transaction(async (tx) => {
       const admission = await tx.admission.create({
         data: {
@@ -35,9 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json(admission, { status: 201 });
   } catch (error: unknown) {
     const message =
-      error instanceof Error
-        ? error.message
-        : "Erro ao registrar internamento";
+      error instanceof Error ? error.message : "Erro ao registrar internamento";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

@@ -10,11 +10,17 @@ export const employeeSchema = z.object({
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
   cpf: z
     .string()
-    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve ter o formato 000.000.000-00")
+    .regex(
+      /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+      "CPF deve ter o formato 000.000.000-00",
+    )
     .refine((val) => validateCpf(val), "CPF inválido"),
   phone: z
     .string()
-    .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Telefone deve ter o formato (00) 00000-0000")
+    .regex(
+      /^\(\d{2}\)\s?\d{4,5}-\d{4}$/,
+      "Telefone deve ter o formato (00) 00000-0000",
+    )
     .refine((val) => validatePhone(val), "Telefone inválido"),
   email: z.string().email("Email inválido"),
   address: z.string().min(5, "Endereço deve ter no mínimo 5 caracteres"),
@@ -31,12 +37,18 @@ export const doctorSchema = z.object({
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
   cpf: z
     .string()
-    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve ter o formato 000.000.000-00")
+    .regex(
+      /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+      "CPF deve ter o formato 000.000.000-00",
+    )
     .refine((val) => validateCpf(val), "CPF inválido"),
   crm: z.string().min(5, "CRM é obrigatório"),
   phone: z
     .string()
-    .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Telefone deve ter o formato (00) 00000-0000")
+    .regex(
+      /^\(\d{2}\)\s?\d{4,5}-\d{4}$/,
+      "Telefone deve ter o formato (00) 00000-0000",
+    )
     .refine((val) => validatePhone(val), "Telefone inválido"),
   email: z.string().email("Email inválido"),
   specialtyId: z.string().min(1, "Especialidade é obrigatória"),
@@ -46,15 +58,24 @@ export const patientSchema = z.object({
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
   cpf: z
     .string()
-    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve ter o formato 000.000.000-00")
+    .regex(
+      /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+      "CPF deve ter o formato 000.000.000-00",
+    )
     .refine((val) => validateCpf(val), "CPF inválido"),
   rg: z
     .string()
-    .regex(/^\d{2}\.\d{3}\.\d{3}-?[\dXx]$/, "RG deve ter o formato XX.XXX.XXX-X")
+    .regex(
+      /^\d{2}\.\d{3}\.\d{3}-?[\dXx]$/,
+      "RG deve ter o formato XX.XXX.XXX-X",
+    )
     .refine((val) => validateRg(val), "RG inválido"),
   phone: z
     .string()
-    .regex(/^\(\d{2}\)\s?\d{4,5}-\d{4}$/, "Telefone deve ter o formato (00) 00000-0000")
+    .regex(
+      /^\(\d{2}\)\s?\d{4,5}-\d{4}$/,
+      "Telefone deve ter o formato (00) 00000-0000",
+    )
     .refine((val) => validatePhone(val), "Telefone inválido"),
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   address: z.string().min(5, "Endereço deve ter no mínimo 5 caracteres"),

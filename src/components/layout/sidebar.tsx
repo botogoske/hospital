@@ -24,9 +24,7 @@ import {
 const menuGroups = [
   {
     title: "NAV",
-    items: [
-      { href: "/dashboard", label: "Dashboard", icon: HiHome },
-    ],
+    items: [{ href: "/dashboard", label: "Dashboard", icon: HiHome }],
   },
   {
     title: "ATENDIMENTO CLINICO",
@@ -46,7 +44,11 @@ const menuGroups = [
       { href: "/funcionarios", label: "Funcionarios", icon: HiUsers },
       { href: "/medicamentos", label: "Medicamentos", icon: HiBeaker },
       { href: "/leitos", label: "Leitos", icon: FaBed },
-      { href: "/planos-de-saude", label: "Planos de Saude", icon: HiShieldCheck },
+      {
+        href: "/planos-de-saude",
+        label: "Planos de Saude",
+        icon: HiShieldCheck,
+      },
     ],
   },
 ];
@@ -91,13 +93,15 @@ export function Sidebar() {
                       "group flex items-center gap-3 px-3 py-2 text-xs font-medium uppercase tracking-wide transition-all duration-150",
                       isActive
                         ? "bg-[#E61919] text-white border-l-2 border-l-[#E61919]"
-                        : "text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] border-l-2 border-l-transparent"
+                        : "text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] border-l-2 border-l-transparent",
                     )}
                   >
                     <item.icon
                       className={cn(
                         "h-3.5 w-3.5 transition-colors",
-                        isActive ? "text-white" : "text-[#555555] group-hover:text-[#E61919]"
+                        isActive
+                          ? "text-white"
+                          : "text-[#555555] group-hover:text-[#E61919]",
                       )}
                     />
                     <span className="font-mono text-[11px]">{item.label}</span>
