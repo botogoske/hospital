@@ -14,6 +14,7 @@ import { HiPlus, HiTrash, HiDocumentDownload } from "react-icons/hi";
 import { FaBed, FaCheckCircle } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { formStyles, statusColors, statusBadgeStyle } from "@/styles/form-styles";
 
 interface Patient { id: string; name: string; }
 interface Doctor { id: string; name: string; }
@@ -110,48 +111,48 @@ export default function AdmissionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border border-[#222222] bg-[#111111] p-6">
-        <div className="flex items-center justify-between">
+      <div className={formStyles.header.container}>
+        <div className={formStyles.header.row}>
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white"><FaBed className="h-5 w-5" /></div>
+            <div className={formStyles.header.iconBox}><FaBed className="h-5 w-5" /></div>
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">INTERNAMENTOS</h1>
-              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">REGISTROS DE INTERNAMENTO DE PACIENTES</p>
+              <h1 className={formStyles.header.title}>INTERNAMENTOS</h1>
+              <p className={formStyles.header.subtitle}>REGISTROS DE INTERNAMENTO DE PACIENTES</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <button onClick={exportPdf} className={formStyles.button.export}><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger render={<Button />}>
-                <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVO INTERNAMENTO</span>
+                <span className={formStyles.button.trigger}><HiPlus className="h-3.5 w-3.5" /> NOVO INTERNAMENTO</span>
               </DialogTrigger>
-              <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
-                <DialogHeader className="border-b border-[#222222] px-6 py-4">
-                  <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">[ NOVO ] REGISTRAR INTERNAMENTO</DialogTitle>
+              <DialogContent className={formStyles.dialog.content}>
+                <DialogHeader className={formStyles.dialog.header}>
+                  <DialogTitle className={formStyles.dialog.title}>[ NOVO ] REGISTRAR INTERNAMENTO</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; PACIENTE</Label>
-                    <select {...register("patientId")} className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; PACIENTE</Label>
+                    <select {...register("patientId")} className={formStyles.field.select}>
                       <option value="">SELECIONE O PACIENTE...</option>{patients.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
-                    {errors.patientId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.patientId.message}</p>}
+                    {errors.patientId && <p className={formStyles.field.error}>{errors.patientId.message}</p>}
                   </div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; MEDICO</Label>
-                    <select {...register("doctorId")} className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; MEDICO</Label>
+                    <select {...register("doctorId")} className={formStyles.field.select}>
                       <option value="">SELECIONE O MEDICO...</option>{doctors.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                     </select>
-                    {errors.doctorId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.doctorId.message}</p>}
+                    {errors.doctorId && <p className={formStyles.field.error}>{errors.doctorId.message}</p>}
                   </div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; LEITO</Label>
-                    <select {...register("bedId")} className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; LEITO</Label>
+                    <select {...register("bedId")} className={formStyles.field.select}>
                       <option value="">SELECIONE O LEITO...</option>{beds.filter((b) => b.status === "AVAILABLE").map((b) => <option key={b.id} value={b.id}>LEITO {b.number} - {b.ward}</option>)}
                     </select>
-                    {errors.bedId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.bedId.message}</p>}
+                    {errors.bedId && <p className={formStyles.field.error}>{errors.bedId.message}</p>}
                   </div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; DATA DE INTERNACAO</Label><Input type="date" {...register("admissionDate")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.admissionDate && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.admissionDate.message}</p>}</div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; PREVISAO DE ALTA</Label><Input type="date" {...register("predictedDischargeDate")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" /></div>
-                  <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; OBSERVACOES</Label><Input {...register("notes")} placeholder="OPCIONAL" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" /></div>
-                  <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>{loading ? "[ REGISTRANDO... ]" : "[ REGISTRAR INTERNAMENTO ]"}</Button>
+                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; DATA DE INTERNACAO</Label><Input type="date" {...register("admissionDate")} className={formStyles.field.input} />{errors.admissionDate && <p className={formStyles.field.error}>{errors.admissionDate.message}</p>}</div>
+                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; PREVISAO DE ALTA</Label><Input type="date" {...register("predictedDischargeDate")} className={formStyles.field.input} /></div>
+                  <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; OBSERVACOES</Label><Input {...register("notes")} placeholder="OPCIONAL" className={formStyles.field.input} /></div>
+                  <Button type="submit" className={formStyles.button.primary} disabled={loading}>{loading ? "[ REGISTRANDO... ]" : "[ REGISTRAR INTERNAMENTO ]"}</Button>
                 </form>
               </DialogContent>
             </Dialog>
@@ -159,41 +160,41 @@ export default function AdmissionsPage() {
         </div>
       </div>
 
-      <div className="border border-[#222222] bg-[#111111]">
-        <div className="border-b border-[#222222] px-6 py-4"><span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ INTERNAMENTOS REGISTRADOS ]</span></div>
+      <div className={formStyles.section.container}>
+        <div className={formStyles.section.header}><span className={formStyles.section.title}>[ INTERNAMENTOS REGISTRADOS ]</span></div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PACIENTE</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">MEDICO</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">LEITO</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">DATA INTERNACAO</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PREVISAO ALTA</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">STATUS</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
+              <TableRow className={formStyles.table.headerRow}>
+                <TableHead className={formStyles.table.headerCell}>PACIENTE</TableHead>
+                <TableHead className={formStyles.table.headerCell}>MEDICO</TableHead>
+                <TableHead className={formStyles.table.headerCell}>LEITO</TableHead>
+                <TableHead className={formStyles.table.headerCell}>DATA INTERNACAO</TableHead>
+                <TableHead className={formStyles.table.headerCell}>PREVISAO ALTA</TableHead>
+                <TableHead className={formStyles.table.headerCell}>STATUS</TableHead>
+                <TableHead className={`${formStyles.table.headerCell} text-right`}>ACOES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {admissions.map((a) => (
-                <TableRow key={a.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{a.patient.name}</TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{a.doctor.name}</TableCell>
-                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">LEITO {a.bed.number} - {a.bed.ward}</TableCell>
-                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{new Date(a.admissionDate).toLocaleDateString("pt-BR")}</TableCell>
-                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{a.predictedDischargeDate ? new Date(a.predictedDischargeDate).toLocaleDateString("pt-BR") : "—"}</TableCell>
-                  <TableCell><span className={`inline-block border-l-2 ${admissionStatusBorders[a.status] || "border-l-[#333333]"} pl-2 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA]`}>[ {admissionStatusLabels[a.status] || a.status} ]</span></TableCell>
+                <TableRow key={a.id} className={formStyles.table.bodyRow}>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>{a.patient.name}</TableCell>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>{a.doctor.name}</TableCell>
+                  <TableCell className={formStyles.table.cell}>LEITO {a.bed.number} - {a.bed.ward}</TableCell>
+                  <TableCell className={formStyles.table.cell}>{new Date(a.admissionDate).toLocaleDateString("pt-BR")}</TableCell>
+                  <TableCell className={formStyles.table.cell}>{a.predictedDischargeDate ? new Date(a.predictedDischargeDate).toLocaleDateString("pt-BR") : "—"}</TableCell>
+                  <TableCell><span className={`${statusBadgeStyle} ${statusColors[a.status.toLowerCase() as keyof typeof statusColors] || "border-l-[#333333]"}`}>[ {admissionStatusLabels[a.status] || a.status} ]</span></TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
                       {a.status === "ACTIVE" && (
                         <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#4AF626]/10 hover:text-[#4AF626] transition-colors" onClick={() => handleDischarge(a.id)} title="Dar alta"><FaCheckCircle className="h-3.5 w-3.5" /></button>
                       )}
-                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(a.id)} title="Excluir"><HiTrash className="h-3.5 w-3.5" /></button>
+                      <button className={formStyles.button.delete} onClick={() => handleDelete(a.id)} title="Excluir"><HiTrash className="h-3.5 w-3.5" /></button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              {admissions.length === 0 && <TableRow><TableCell colSpan={7} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">NENHUM INTERNAMENTO REGISTRADO</TableCell></TableRow>}
+              {admissions.length === 0 && <TableRow><TableCell colSpan={7} className={formStyles.table.emptyState}>NENHUM INTERNAMENTO REGISTRADO</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>

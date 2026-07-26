@@ -34,6 +34,7 @@ import {
 } from "react-icons/hi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { formStyles } from "@/styles/form-styles";
 
 interface Patient {
   id: string;
@@ -204,17 +205,17 @@ export default function PatientsPage() {
   return (
     <div className="space-y-6 pb-8">
       {/* Page Title */}
-      <div className="border border-[#222222] bg-[#111111] p-6">
+      <div className={formStyles.header.container}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white">
+            <div className={formStyles.header.iconBox}>
               <HiUserGroup className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-tighter text-[#EAEAEA] leading-none">
+              <h1 className={formStyles.header.title}>
                 GESTAO DE PACIENTES
               </h1>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-[#555555] mt-1">
+              <p className={formStyles.header.subtitle}>
                 CADASTRE, EDITE E CONSULTE AS INFORMACOES MEDICAS DOS PACIENTES
               </p>
             </div>
@@ -223,7 +224,7 @@ export default function PatientsPage() {
           <div className="flex gap-2">
             <button
               onClick={exportPdf}
-              className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:bg-[#1A1A1A] transition-colors"
+              className={formStyles.button.export}
             >
               <HiDocumentDownload className="h-3.5 w-3.5" />
               EXPORTAR PDF
@@ -239,15 +240,15 @@ export default function PatientsPage() {
               }}
             >
             <DialogTrigger render={<Button />}>
-              <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515] transition-colors">
+              <span className={formStyles.button.trigger}>
                 <HiPlus className="h-3.5 w-3.5" />
                 NOVO PACIENTE
               </span>
             </DialogTrigger>
 
-            <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
-              <DialogHeader className="border-b border-[#222222] px-6 py-4">
-                <DialogTitle className="font-mono text-sm uppercase tracking-widest text-[#EAEAEA]">
+            <DialogContent className={formStyles.dialog.content}>
+              <DialogHeader className={formStyles.dialog.header}>
+                <DialogTitle className={formStyles.dialog.title}>
                   {editingPatient
                     ? "[ EDITAR ] CADASTRO DO PACIENTE"
                     : "[ NOVO ] CADASTRAR PACIENTE"}
@@ -258,15 +259,15 @@ export default function PatientsPage() {
                 <div className="grid gap-4 sm:grid-cols-4">
                   {/* NOME - linha inteira */}
                   <div className="col-span-4 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; NOME COMPLETO
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      className={`${formStyles.field.input} h-10`}
                       {...register("name")}
                     />
                     {errors.name && (
-                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                      <p className={formStyles.field.error}>
                         {errors.name.message}
                       </p>
                     )}
@@ -274,35 +275,35 @@ export default function PatientsPage() {
 
                   {/* CPF + RG - mesma linha */}
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; CPF
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      className={formStyles.field.input}
                       {...register("cpf")}
                       onChange={handleCpfChange}
                       maxLength={14}
                       placeholder="000.000.000-00"
                     />
                     {errors.cpf && (
-                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                      <p className={formStyles.field.error}>
                         {errors.cpf.message}
                       </p>
                     )}
                   </div>
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; RG
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      className={formStyles.field.input}
                       {...register("rg")}
                       onChange={handleRgChange}
                       maxLength={12}
                       placeholder="XX.XXX.XXX-X"
                     />
                     {errors.rg && (
-                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                      <p className={formStyles.field.error}>
                         {errors.rg.message}
                       </p>
                     )}
@@ -310,18 +311,18 @@ export default function PatientsPage() {
 
                   {/* TELEFONE */}
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; TELEFONE / WHATSAPP
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      className={`${formStyles.field.input} h-10`}
                       {...register("phone")}
                       onChange={handlePhoneChange}
                       maxLength={15}
                       placeholder="(00) 00000-0000"
                     />
                     {errors.phone && (
-                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                      <p className={formStyles.field.error}>
                         {errors.phone.message}
                       </p>
                     )}
@@ -329,16 +330,16 @@ export default function PatientsPage() {
 
                   {/* DATA NASCIMENTO */}
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; DATA DE NASCIMENTO
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      className={`${formStyles.field.input} h-10`}
                       type="date"
                       {...register("birthDate")}
                     />
                     {errors.birthDate && (
-                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                      <p className={formStyles.field.error}>
                         {errors.birthDate.message}
                       </p>
                     )}
@@ -346,11 +347,11 @@ export default function PatientsPage() {
 
                   {/* EMAIL - linha inteira */}
                   <div className="col-span-4 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; EMAIL
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      className={`${formStyles.field.input} h-10`}
                       type="email"
                       {...register("email")}
                     />
@@ -358,42 +359,42 @@ export default function PatientsPage() {
 
                   {/* TIPO SANGUINEO + CEP mesma linha */}
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; TIPO SANGUINEO
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      className={formStyles.field.input}
                       {...register("bloodType")}
                       placeholder="A+, O-, B+"
                     />
                   </div>
                   <div className="col-span-2 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; CEP
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      className={formStyles.field.input}
                       {...register("cep")}
                       onChange={handleCepChange}
                       maxLength={9}
                       placeholder="00000-000"
                     />
                     {errors.cep && (
-                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                      <p className={formStyles.field.error}>
                         {errors.cep.message}
                       </p>
                     )}
                   </div>
                   <div className="col-span-4 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; ENDERECO RESIDENCIAL
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0 h-10"
+                      className={`${formStyles.field.input} h-10`}
                       {...register("address")}
                     />
                     {errors.address && (
-                      <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                      <p className={formStyles.field.error}>
                         {errors.address.message}
                       </p>
                     )}
@@ -401,11 +402,11 @@ export default function PatientsPage() {
 
                   {/* ALERGIAS - linha inteira */}
                   <div className="col-span-4 space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                    <Label className={formStyles.field.label}>
                       &gt; ALERGIAS / OBSERVACOES
                     </Label>
                     <Input
-                      className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                      className={formStyles.field.input}
                       {...register("allergies")}
                       placeholder="EX: ALERGIA A PENICILINA"
                     />
@@ -414,7 +415,7 @@ export default function PatientsPage() {
 
                 <Button
                   type="submit"
-                  className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10"
+                  className={formStyles.button.primary}
                   disabled={loading}
                 >
                   {loading
@@ -431,19 +432,19 @@ export default function PatientsPage() {
       </div>
 
       {/* Table */}
-      <div className="border border-[#222222] bg-[#111111]">
+      <div className={formStyles.section.container}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#222222] px-6 py-4">
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">
+          <span className={formStyles.section.title}>
             [ LISTA DE PACIENTES REGISTRADOS ] ({filteredPatients.length})
           </span>
           <div className="relative w-full md:w-72">
-            <HiSearch className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#555555]" />
+            <HiSearch className={formStyles.search.icon} />
             <input
               type="text"
               placeholder="FILTRAR POR NOME, CPF OU FONE..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full border border-[#222222] bg-[#0D0D0D] py-1.5 pl-9 pr-3 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA] placeholder:text-[#444444] focus:border-[#E61919] focus:outline-none rounded-none"
+              className={formStyles.search.input}
             />
           </div>
         </div>
@@ -451,26 +452,26 @@ export default function PatientsPage() {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+              <TableRow className={formStyles.table.headerRow}>
+                <TableHead className={formStyles.table.headerCell}>
                   PACIENTE
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   CPF
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   TELEFONE
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   CEP
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   TIPO SANGUINEO
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   NASCIMENTO
                 </TableHead>
-                <TableHead className="text-right font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={`${formStyles.table.headerCell} text-right`}>
                   ACOES
                 </TableHead>
               </TableRow>
@@ -485,7 +486,7 @@ export default function PatientsPage() {
                 return (
                   <TableRow
                     key={p.id}
-                    className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors"
+                    className={formStyles.table.bodyRow}
                   >
                     <TableCell className="py-3">
                       <div className="flex items-center gap-3">
@@ -493,7 +494,7 @@ export default function PatientsPage() {
                           {initials}
                         </div>
                         <div>
-                          <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                          <p className={`${formStyles.table.cell} uppercase tracking-wider`}>
                             {p.name}
                           </p>
                           {p.email && (
@@ -504,13 +505,13 @@ export default function PatientsPage() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                    <TableCell className={formStyles.table.cell}>
                       {p.cpf}
                     </TableCell>
-                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                    <TableCell className={formStyles.table.cell}>
                       {p.phone}
                     </TableCell>
-                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                    <TableCell className={formStyles.table.cell}>
                       {p.cep}
                     </TableCell>
                     <TableCell>
@@ -524,19 +525,19 @@ export default function PatientsPage() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                    <TableCell className={formStyles.table.cell}>
                       {new Date(p.birthDate).toLocaleDateString("pt-BR")}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
                         <button
-                          className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"
+                          className={formStyles.button.edit}
                           onClick={() => handleEdit(p)}
                         >
                           <HiPencil className="h-3.5 w-3.5" />
                         </button>
                         <button
-                          className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors"
+                          className={formStyles.button.delete}
                           onClick={() => handleDelete(p.id)}
                         >
                           <HiTrash className="h-3.5 w-3.5" />
@@ -550,7 +551,7 @@ export default function PatientsPage() {
                 <TableRow>
                   <TableCell
                     colSpan={7}
-                    className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]"
+                    className={formStyles.table.emptyState}
                   >
                     NENHUM PACIENTE ENCONTRADO.
                   </TableCell>

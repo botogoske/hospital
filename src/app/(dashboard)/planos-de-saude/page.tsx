@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { HiPlus, HiPencil, HiTrash, HiSearch, HiShieldCheck, HiDocumentDownload } from "react-icons/hi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { formStyles, statusColors, statusBadgeStyle } from "@/styles/form-styles";
 
 interface HealthPlan { id: string; name: string; provider: string; registrationNumber: string; coverageType: string; isActive: boolean; _count: { appointments: number }; }
 
@@ -93,32 +94,32 @@ export default function HealthPlansPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border border-[#222222] bg-[#111111] p-6">
-        <div className="flex items-center justify-between">
+      <div className={formStyles.header.container}>
+        <div className={formStyles.header.row}>
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white"><HiShieldCheck className="h-5 w-5" /></div>
+            <div className={formStyles.header.iconBox}><HiShieldCheck className="h-5 w-5" /></div>
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">PLANOS DE SAUDE</h1>
-              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">GERENCIE OS CONVENIOS E PLANOS DE SAUDE</p>
+              <h1 className={formStyles.header.title}>PLANOS DE SAUDE</h1>
+              <p className={formStyles.header.subtitle}>GERENCIE OS CONVENIOS E PLANOS DE SAUDE</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <button onClick={exportPdf} className={formStyles.button.export}><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
             <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset({ coverageType: "STANDARD" }); setSelectedCoverage("STANDARD"); setEditingPlan(null); } }}>
             <DialogTrigger render={<Button />}>
-              <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]"><HiPlus className="h-3.5 w-3.5" /> NOVO PLANO</span>
+              <span className={formStyles.button.trigger}><HiPlus className="h-3.5 w-3.5" /> NOVO PLANO</span>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
-              <DialogHeader className="border-b border-[#222222] px-6 py-4">
-                <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">{editingPlan ? "[ EDITAR ] PLANO DE SAUDE" : "[ NOVO ] CADASTRAR PLANO DE SAUDE"}</DialogTitle>
+            <DialogContent className={formStyles.dialog.content}>
+              <DialogHeader className={formStyles.dialog.header}>
+                <DialogTitle className={formStyles.dialog.title}>{editingPlan ? "[ EDITAR ] PLANO DE SAUDE" : "[ NOVO ] CADASTRAR PLANO DE SAUDE"}</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-                <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NOME DO PLANO</Label><Input {...register("name")} placeholder="EX: UNIMED GOLD" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.name && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.name.message}</p>}</div>
-                <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; OPERADORA</Label><Input {...register("provider")} placeholder="EX: UNIMED" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.provider && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.provider.message}</p>}</div>
-                <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; NUMERO DE REGISTRO (ANS)</Label><Input {...register("registrationNumber")} placeholder="EX: 302147" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />{errors.registrationNumber && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.registrationNumber.message}</p>}</div>
-                <div className="space-y-1.5"><Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; TIPO DE COBERTURA</Label>
+                <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; NOME DO PLANO</Label><Input {...register("name")} placeholder="EX: UNIMED GOLD" className={formStyles.field.input} />{errors.name && <p className={formStyles.field.error}>{errors.name.message}</p>}</div>
+                <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; OPERADORA</Label><Input {...register("provider")} placeholder="EX: UNIMED" className={formStyles.field.input} />{errors.provider && <p className={formStyles.field.error}>{errors.provider.message}</p>}</div>
+                <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; NUMERO DE REGISTRO (ANS)</Label><Input {...register("registrationNumber")} placeholder="EX: 302147" className={formStyles.field.input} />{errors.registrationNumber && <p className={formStyles.field.error}>{errors.registrationNumber.message}</p>}</div>
+                <div className={formStyles.field.wrapper}><Label className={formStyles.field.label}>&gt; TIPO DE COBERTURA</Label>
                   <select value={selectedCoverage} onChange={(e) => { setSelectedCoverage(e.target.value); setValue("coverageType", e.target.value as "BASIC" | "STANDARD" | "PREMIUM"); }}
-                    className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                    className={formStyles.field.select}>
                     <option value="BASIC">BASICO</option><option value="STANDARD">STANDARD</option><option value="PREMIUM">PREMIUM</option>
                   </select>
                 </div>
@@ -128,7 +129,7 @@ export default function HealthPlansPage() {
                     <Label htmlFor="isActive" className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#EAEAEA]">PLANO ATIVO</Label>
                   </div>
                 )}
-                <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>{loading ? "[ SALVANDO... ]" : editingPlan ? "[ ATUALIZAR PLANO ]" : "[ CADASTRAR PLANO ]"}</Button>
+                <Button type="submit" className={formStyles.button.primary} disabled={loading}>{loading ? "[ SALVANDO... ]" : editingPlan ? "[ ATUALIZAR PLANO ]" : "[ CADASTRAR PLANO ]"}</Button>
               </form>
             </DialogContent>
           </Dialog>
@@ -136,46 +137,46 @@ export default function HealthPlansPage() {
         </div>
       </div>
 
-      <div className="border border-[#222222] bg-[#111111]">
-        <div className="border-b border-[#222222] px-6 py-4 space-y-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ PLANOS CADASTRADOS ]</span>
-          <div className="relative">
-            <HiSearch className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#555555]" />
+      <div className={formStyles.section.container}>
+        <div className={formStyles.section.header}>
+          <span className={formStyles.section.title}>[ PLANOS CADASTRADOS ]</span>
+          <div className={formStyles.search.wrapper}>
+            <HiSearch className={formStyles.search.icon} />
             <input placeholder="BUSCAR POR NOME OU OPERADORA..." value={search} onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-[#222222] bg-[#0D0D0D] py-1.5 pl-9 pr-3 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA] placeholder:text-[#444444] focus:border-[#E61919] focus:outline-none rounded-none" />
+              className={formStyles.search.input} />
           </div>
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">NOME</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">OPERADORA</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">REGISTRO ANS</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">COBERTURA</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">CONSULTAS</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">STATUS</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
+              <TableRow className={formStyles.table.headerRow}>
+                <TableHead className={formStyles.table.headerCell}>NOME</TableHead>
+                <TableHead className={formStyles.table.headerCell}>OPERADORA</TableHead>
+                <TableHead className={formStyles.table.headerCell}>REGISTRO ANS</TableHead>
+                <TableHead className={formStyles.table.headerCell}>COBERTURA</TableHead>
+                <TableHead className={formStyles.table.headerCell}>CONSULTAS</TableHead>
+                <TableHead className={formStyles.table.headerCell}>STATUS</TableHead>
+                <TableHead className={`${formStyles.table.headerCell} text-right`}>ACOES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredPlans.map((plan) => (
-                <TableRow key={plan.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{plan.name}</TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{plan.provider}</TableCell>
-                  <TableCell className="font-mono text-[11px] text-[#777777]">{plan.registrationNumber}</TableCell>
-                  <TableCell><span className={`inline-block border-l-2 ${coverageBorders[plan.coverageType] || "border-l-[#333333]"} pl-2 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA]`}>[ {coverageLabels[plan.coverageType]} ]</span></TableCell>
-                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">{plan._count.appointments}</TableCell>
+                <TableRow key={plan.id} className={formStyles.table.bodyRow}>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>{plan.name}</TableCell>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>{plan.provider}</TableCell>
+                  <TableCell className={formStyles.table.cellMuted}>{plan.registrationNumber}</TableCell>
+                  <TableCell><span className={`${statusBadgeStyle} ${statusColors[plan.coverageType.toLowerCase() as keyof typeof statusColors] || "border-l-[#333333]"}`}>[ {coverageLabels[plan.coverageType]} ]</span></TableCell>
+                  <TableCell className={formStyles.table.cell}>{plan._count.appointments}</TableCell>
                   <TableCell><span className={`font-mono text-[10px] uppercase tracking-wider ${plan.isActive ? "text-[#4AF626]" : "text-[#E61919]"}`}>[ {plan.isActive ? "ATIVO" : "INATIVO"} ]</span></TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors" onClick={() => handleEdit(plan)}><HiPencil className="h-3.5 w-3.5" /></button>
-                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(plan.id)}><HiTrash className="h-3.5 w-3.5" /></button>
+                      <button className={formStyles.button.edit} onClick={() => handleEdit(plan)}><HiPencil className="h-3.5 w-3.5" /></button>
+                      <button className={formStyles.button.delete} onClick={() => handleDelete(plan.id)}><HiTrash className="h-3.5 w-3.5" /></button>
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              {filteredPlans.length === 0 && <TableRow><TableCell colSpan={7} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">{search ? "NENHUM RESULTADO ENCONTRADO" : "NENHUM PLANO DE SAUDE CADASTRADO"}</TableCell></TableRow>}
+              {filteredPlans.length === 0 && <TableRow><TableCell colSpan={7} className={formStyles.table.emptyState}>{search ? "NENHUM RESULTADO ENCONTRADO" : "NENHUM PLANO DE SAUDE CADASTRADO"}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </div>

@@ -26,6 +26,7 @@ import {
 import { HiPlus, HiCalendar, HiSearch, HiPencil, HiTrash, HiDownload } from "react-icons/hi";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { formStyles, statusColors, statusBadgeStyle } from "@/styles/form-styles";
 
 interface Patient { id: string; name: string; }
 interface Doctor { id: string; name: string; }
@@ -151,72 +152,72 @@ export default function AppointmentsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="border border-[#222222] bg-[#111111] p-6">
-        <div className="flex items-center justify-between">
+      <div className={formStyles.header.container}>
+        <div className={formStyles.header.row}>
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white">
+            <div className={formStyles.header.iconBox}>
               <HiCalendar className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-[-0.05em] text-[#EAEAEA] leading-none">CONSULTAS</h1>
-              <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#555555] mt-1">AGENDAMENTO DE CONSULTAS MEDICAS</p>
+              <h1 className={formStyles.header.title}>CONSULTAS</h1>
+              <p className={formStyles.header.subtitle}>AGENDAMENTO DE CONSULTAS MEDICAS</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={handleExportPDF} className="flex items-center gap-2 border border-[#333333] bg-[#1A1A1A] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#EAEAEA] hover:border-[#555555] transition-colors">
+            <button onClick={handleExportPDF} className={formStyles.button.export}>
               <HiDownload className="h-3.5 w-3.5" />
               EXPORTAR PDF
             </button>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger render={<Button />}>
-                <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]">
+                <span className={formStyles.button.trigger}>
                   <HiPlus className="h-3.5 w-3.5" />
                   NOVA CONSULTA
                 </span>
               </DialogTrigger>
-              <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
-                <DialogHeader className="border-b border-[#222222] px-6 py-4">
-                  <DialogTitle className="font-mono text-sm uppercase tracking-[0.1em] text-[#EAEAEA]">
+              <DialogContent className={formStyles.dialog.content}>
+                <DialogHeader className={formStyles.dialog.header}>
+                  <DialogTitle className={formStyles.dialog.title}>
                     {editingAppointment ? "[ EDITAR ] CONSULTA" : "[ NOVO ] AGENDAR CONSULTA"}
                   </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; PACIENTE</Label>
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>&gt; PACIENTE</Label>
                     <select value={selectedPatient} onChange={(e) => { setSelectedPatient(e.target.value); setValue("patientId", e.target.value); }}
-                      className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                      className={formStyles.field.select}>
                       <option value="">SELECIONE O PACIENTE...</option>
                       {patients.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
-                    {errors.patientId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.patientId.message}</p>}
+                    {errors.patientId && <p className={formStyles.field.error}>{errors.patientId.message}</p>}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; MEDICO</Label>
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>&gt; MEDICO</Label>
                     <select value={selectedDoctor} onChange={(e) => { setSelectedDoctor(e.target.value); setValue("doctorId", e.target.value); }}
-                      className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                      className={formStyles.field.select}>
                       <option value="">SELECIONE O MEDICO...</option>
                       {doctors.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                     </select>
-                    {errors.doctorId && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.doctorId.message}</p>}
+                    {errors.doctorId && <p className={formStyles.field.error}>{errors.doctorId.message}</p>}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; DATA E HORA</Label>
-                    <Input type="datetime-local" {...register("scheduledAt")} className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
-                    {errors.scheduledAt && <p className="font-mono text-[10px] uppercase text-[#E61919]">{errors.scheduledAt.message}</p>}
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>&gt; DATA E HORA</Label>
+                    <Input type="datetime-local" {...register("scheduledAt")} className={formStyles.field.input} />
+                    {errors.scheduledAt && <p className={formStyles.field.error}>{errors.scheduledAt.message}</p>}
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; OBSERVACOES</Label>
-                    <Input {...register("notes")} placeholder="OPCIONAL" className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0" />
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>&gt; OBSERVACOES</Label>
+                    <Input {...register("notes")} placeholder="OPCIONAL" className={formStyles.field.input} />
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">&gt; PLANO DE SAUDE</Label>
+                  <div className={formStyles.field.wrapper}>
+                    <Label className={formStyles.field.label}>&gt; PLANO DE SAUDE</Label>
                     <select value={selectedHealthPlan} onChange={(e) => { setSelectedHealthPlan(e.target.value); setValue("healthPlanId", e.target.value || undefined); }}
-                      className="flex w-full border border-[#333333] bg-[#0D0D0D] px-3 py-2 font-mono text-xs text-[#EAEAEA] rounded-none focus:border-[#E61919] focus:outline-none">
+                      className={formStyles.field.select}>
                       <option value="">PARTICULAR (SEM CONVENIO)</option>
                       {healthPlans.map((hp) => <option key={hp.id} value={hp.id}>{hp.name} ({hp.provider})</option>)}
                     </select>
                   </div>
-                  <Button type="submit" className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10" disabled={loading}>
+                  <Button type="submit" className={formStyles.button.primary} disabled={loading}>
                     {loading ? "[ SALVANDO... ]" : editingAppointment ? "[ ATUALIZAR CONSULTA ]" : "[ AGENDAR CONSULTA ]"}
                   </Button>
                 </form>
@@ -227,14 +228,14 @@ export default function AppointmentsPage() {
       </div>
 
       {/* Table */}
-      <div className="border border-[#222222] bg-[#111111]">
-        <div className="border-b border-[#222222] px-6 py-4 space-y-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">[ CONSULTAS AGENDADAS ]</span>
+      <div className={formStyles.section.container}>
+        <div className={formStyles.section.header}>
+          <span className={formStyles.section.title}>[ CONSULTAS AGENDADAS ]</span>
           <div className="flex flex-col gap-3 sm:flex-row">
             <div className="relative flex-1">
-              <HiSearch className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#555555]" />
+              <HiSearch className={formStyles.search.icon} />
               <input placeholder="BUSCAR POR NOME DO PACIENTE..." value={search} onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-[#222222] bg-[#0D0D0D] py-1.5 pl-9 pr-3 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA] placeholder:text-[#444444] focus:border-[#E61919] focus:outline-none rounded-none" />
+                className={formStyles.search.input} />
             </div>
             <div className="flex gap-2">
               <div className="flex items-center gap-2">
@@ -251,14 +252,14 @@ export default function AppointmentsPage() {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PACIENTE</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">MEDICO</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">ESPECIALIDADE</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">PLANO</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">DATA/HORA</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">STATUS</TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">ACOES</TableHead>
+              <TableRow className={formStyles.table.headerRow}>
+                <TableHead className={formStyles.table.headerCell}>PACIENTE</TableHead>
+                <TableHead className={formStyles.table.headerCell}>MEDICO</TableHead>
+                <TableHead className={formStyles.table.headerCell}>ESPECIALIDADE</TableHead>
+                <TableHead className={formStyles.table.headerCell}>PLANO</TableHead>
+                <TableHead className={formStyles.table.headerCell}>DATA/HORA</TableHead>
+                <TableHead className={formStyles.table.headerCell}>STATUS</TableHead>
+                <TableHead className={`${formStyles.table.headerCell} text-right`}>ACOES</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -269,27 +270,27 @@ export default function AppointmentsPage() {
                   return matchSearch && (!startDate || d >= new Date(startDate)) && (!endDate || d <= new Date(endDate + "T23:59:59"));
                 })
                 .map((a) => (
-                <TableRow key={a.id} className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors">
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{a.patient.name}</TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">{a.doctor.name}</TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#777777]">{a.doctor.specialty.name}</TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">
+                <TableRow key={a.id} className={formStyles.table.bodyRow}>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>{a.patient.name}</TableCell>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>{a.doctor.name}</TableCell>
+                  <TableCell className={formStyles.table.cellMuted}>{a.doctor.specialty.name}</TableCell>
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>
                     {a.healthPlan ? a.healthPlan.name : <span className="text-[#444444]">PARTICULAR</span>}
                   </TableCell>
-                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                  <TableCell className={formStyles.table.cell}>
                     {new Date(a.scheduledAt).toLocaleString("pt-BR")}
                   </TableCell>
                   <TableCell>
-                    <span className={`inline-block border-l-2 ${statusBorders[a.status] || "border-l-[#333333]"} pl-2 font-mono text-[10px] uppercase tracking-wider text-[#EAEAEA]`}>
+                    <span className={`${statusBadgeStyle} ${statusColors[a.status.toLowerCase() as keyof typeof statusColors] || "border-l-[#333333]"}`}>
                       [ {statusLabels[a.status] || a.status} ]
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors" onClick={() => handleEdit(a)}>
+                      <button className={formStyles.button.edit} onClick={() => handleEdit(a)}>
                         <HiPencil className="h-3.5 w-3.5" />
                       </button>
-                      <button className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors" onClick={() => handleDelete(a.id)}>
+                      <button className={formStyles.button.delete} onClick={() => handleDelete(a.id)}>
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -302,7 +303,7 @@ export default function AppointmentsPage() {
                 return matchSearch && (!startDate || d >= new Date(startDate)) && (!endDate || d <= new Date(endDate + "T23:59:59"));
               }).length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]">
+                  <TableCell colSpan={7} className={formStyles.table.emptyState}>
                     {(search || startDate || endDate) ? "NENHUM RESULTADO ENCONTRADO" : "NENHUMA CONSULTA AGENDADA"}
                   </TableCell>
                 </TableRow>

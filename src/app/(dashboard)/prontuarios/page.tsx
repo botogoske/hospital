@@ -37,6 +37,7 @@ import { HiPlus, HiPencil, HiTrash, HiDocumentDownload } from "react-icons/hi";
 import { FaNotesMedical } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { formStyles } from "@/styles/form-styles";
 
 interface Patient {
   id: string;
@@ -176,23 +177,23 @@ export default function MedicalRecordsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border border-[#222222] bg-[#111111] p-6">
-        <div className="flex items-center justify-between">
+      <div className={formStyles.header.container}>
+        <div className={formStyles.header.row}>
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center bg-[#E61919] text-white">
+            <div className={formStyles.header.iconBox}>
               <FaNotesMedical className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-3xl font-black uppercase tracking-tighter text-[#EAEAEA] leading-none">
+              <h1 className={formStyles.header.title}>
                 PRONTUARIOS
               </h1>
-              <p className="font-mono text-[10px] uppercase tracking-widest text-[#555555] mt-1">
+              <p className={formStyles.header.subtitle}>
                 REGISTROS MEDICOS DOS PACIENTES
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={exportPdf} className="flex items-center gap-2 border border-[#333333] bg-[#111111] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#777777] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
+            <button onClick={exportPdf} className={formStyles.button.export}><HiDocumentDownload className="h-3.5 w-3.5" /> EXPORTAR PDF</button>
             <Dialog
               open={open}
               onOpenChange={(v) => {
@@ -206,13 +207,13 @@ export default function MedicalRecordsPage() {
               }}
             >
             <DialogTrigger render={<Button />}>
-              <span className="flex items-center gap-2 border border-[#E61919] bg-[#E61919] px-3 py-2 font-mono text-[10px] uppercase tracking-[0.08em] text-white hover:bg-[#CC1515]">
+              <span className={formStyles.button.trigger}>
                 <HiPlus className="h-3.5 w-3.5" /> NOVO PRONTUARIO
               </span>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] overflow-y-auto border border-[#333333] bg-[#111111] p-0 rounded-none shadow-none">
-              <DialogHeader className="border-b border-[#222222] px-6 py-4">
-                <DialogTitle className="font-mono text-sm uppercase tracking-widest text-[#EAEAEA]">
+            <DialogContent className={formStyles.dialog.content}>
+              <DialogHeader className={formStyles.dialog.header}>
+                <DialogTitle className={formStyles.dialog.title}>
                   {editingRecord
                     ? "[ EDITAR ] PRONTUARIO"
                     : "[ NOVO ] CADASTRAR PRONTUARIO"}
@@ -220,7 +221,7 @@ export default function MedicalRecordsPage() {
               </DialogHeader>
               <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
                 <div className="flex-1 space-y-1.5">
-                  <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                  <Label className={formStyles.field.label}>
                     &gt; PACIENTE
                   </Label>
                   <Select
@@ -251,13 +252,13 @@ export default function MedicalRecordsPage() {
                     </SelectContent>
                   </Select>
                   {errors.patientId && (
-                    <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                    <p className={formStyles.field.error}>
                       {errors.patientId.message}
                     </p>
                   )}
                 </div>
                 <div className="flex-1 space-y-1.5">
-                  <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                  <Label className={formStyles.field.label}>
                     &gt; MEDICO
                   </Label>
                   <Select
@@ -288,52 +289,52 @@ export default function MedicalRecordsPage() {
                     </SelectContent>
                   </Select>
                   {errors.doctorId && (
-                    <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                    <p className={formStyles.field.error}>
                       {errors.doctorId.message}
                     </p>
                   )}
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                <div className={formStyles.field.wrapper}>
+                  <Label className={formStyles.field.label}>
                     &gt; DIAGNOSTICO
                   </Label>
                   <Input
                     {...register("diagnosis")}
-                    className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                    className={formStyles.field.input}
                   />
                   {errors.diagnosis && (
-                    <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                    <p className={formStyles.field.error}>
                       {errors.diagnosis.message}
                     </p>
                   )}
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                <div className={formStyles.field.wrapper}>
+                  <Label className={formStyles.field.label}>
                     &gt; TRATAMENTO
                   </Label>
                   <Input
                     {...register("treatment")}
-                    className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                    className={formStyles.field.input}
                   />
                   {errors.treatment && (
-                    <p className="font-mono text-[10px] uppercase text-[#E61919]">
+                    <p className={formStyles.field.error}>
                       {errors.treatment.message}
                     </p>
                   )}
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#777777]">
+                <div className={formStyles.field.wrapper}>
+                  <Label className={formStyles.field.label}>
                     &gt; OBSERVACOES
                   </Label>
                   <Input
                     {...register("notes")}
                     placeholder="OPCIONAL"
-                    className="rounded-none border-[#333333] bg-[#0D0D0D] font-mono text-xs text-[#EAEAEA] focus:border-[#E61919] focus:ring-0"
+                    className={formStyles.field.input}
                   />
                 </div>
                 <Button
                   type="submit"
-                  className="w-full rounded-none bg-[#E61919] text-white font-mono text-[11px] uppercase tracking-[0.08em] hover:bg-[#CC1515] h-10"
+                  className={formStyles.button.primary}
                   disabled={loading}
                 >
                   {loading
@@ -349,32 +350,32 @@ export default function MedicalRecordsPage() {
         </div>
       </div>
 
-      <div className="border border-[#222222] bg-[#111111]">
-        <div className="border-b border-[#222222] px-6 py-4">
-          <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#777777]">
+      <div className={formStyles.section.container}>
+        <div className={formStyles.section.header}>
+          <span className={formStyles.section.title}>
             [ LISTA DE PRONTUARIOS ]
           </span>
         </div>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-[#222222] bg-[#0D0D0D] hover:bg-[#0D0D0D]">
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+              <TableRow className={formStyles.table.headerRow}>
+                <TableHead className={formStyles.table.headerCell}>
                   PACIENTE
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   MEDICO
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   DIAGNOSTICO
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   TRATAMENTO
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium">
+                <TableHead className={formStyles.table.headerCell}>
                   DATA
                 </TableHead>
-                <TableHead className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#555555] font-medium text-right">
+                <TableHead className={`${formStyles.table.headerCell} text-right`}>
                   ACOES
                 </TableHead>
               </TableRow>
@@ -383,33 +384,33 @@ export default function MedicalRecordsPage() {
               {records.map((r) => (
                 <TableRow
                   key={r.id}
-                  className="border-b border-[#1A1A1A] hover:bg-[#141414] transition-colors"
+                  className={formStyles.table.bodyRow}
                 >
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>
                     {r.patient.name}
                   </TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#EAEAEA]">
+                  <TableCell className={`${formStyles.table.cell} uppercase`}>
                     {r.doctor.name}
                   </TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#777777]">
+                  <TableCell className={formStyles.table.cellMuted}>
                     {r.diagnosis}
                   </TableCell>
-                  <TableCell className="font-mono text-[11px] uppercase text-[#777777]">
+                  <TableCell className={formStyles.table.cellMuted}>
                     {r.treatment}
                   </TableCell>
-                  <TableCell className="font-mono text-[11px] text-[#EAEAEA]">
+                  <TableCell className={formStyles.table.cell}>
                     {new Date(r.visitDate).toLocaleDateString("pt-BR")}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
                       <button
-                        className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#1A1A1A] hover:text-[#EAEAEA] transition-colors"
+                        className={formStyles.button.edit}
                         onClick={() => handleEdit(r)}
                       >
                         <HiPencil className="h-3.5 w-3.5" />
                       </button>
                       <button
-                        className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#E61919]/10 hover:text-[#E61919] transition-colors"
+                        className={formStyles.button.delete}
                         onClick={() => handleDelete(r.id)}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
@@ -422,7 +423,7 @@ export default function MedicalRecordsPage() {
                 <TableRow>
                   <TableCell
                     colSpan={6}
-                    className="py-8 text-center font-mono text-[11px] uppercase tracking-wider text-[#444444]"
+                    className={formStyles.table.emptyState}
                   >
                     NENHUM PRONTUARIO CADASTRADO
                   </TableCell>

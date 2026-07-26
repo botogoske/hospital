@@ -49,15 +49,23 @@ export function Header() {
           {notificationsOpen && (
             <div className="absolute right-0 mt-2 w-80 border border-[#333333] bg-[#111111] shadow-2xl">
               <div className="flex items-center justify-between border-b border-[#222222] px-4 py-3">
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-[#EAEAEA]">[ NOTIFICACOES ]</span>
-                <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#E61919] cursor-pointer hover:underline">MARCAR COMO LIDAS</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest text-[#EAEAEA]">
+                  [ NOTIFICACOES ]
+                </span>
+                <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#E61919] cursor-pointer hover:underline">
+                  MARCAR COMO LIDAS
+                </span>
               </div>
               <div className="p-4">
                 <div className="flex gap-3 items-start">
                   <div className="h-1.5 w-1.5 mt-1.5 bg-[#E61919] shrink-0" />
                   <div>
-                    <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">NOVO AGENDAMENTO DE CIRURGIA</p>
-                    <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#555555] mt-1">HA 10 MINUTOS POR DR. RICARDO</p>
+                    <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                      NOVO AGENDAMENTO DE CIRURGIA
+                    </p>
+                    <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#555555] mt-1">
+                      HA 10 MINUTOS POR DR. RICARDO
+                    </p>
                   </div>
                 </div>
               </div>
@@ -76,8 +84,12 @@ export function Header() {
             </AvatarFallback>
           </Avatar>
           <div className="hidden text-left md:block">
-            <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">DR. ADMINISTRADOR</p>
-            <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#555555]">GESTAO GERAL</p>
+            <p className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+              DR. ADMINISTRADOR
+            </p>
+            <p className="font-mono text-[9px] uppercase tracking-[0.08em] text-[#555555]">
+              GESTAO GERAL
+            </p>
           </div>
         </div>
       </div>
