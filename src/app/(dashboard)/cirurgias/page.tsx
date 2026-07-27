@@ -42,6 +42,7 @@ import {
   statusColors,
   statusBadgeStyle,
 } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Patient {
   id: string;
@@ -100,6 +101,8 @@ export default function SurgeriesPage() {
   const [selectedSurgery, setSelectedSurgery] = useState("");
   const [editingSchedule, setEditingSchedule] =
     useState<SurgerySchedule | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -174,12 +177,14 @@ export default function SurgeriesPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta cirurgia?")) return;
-    const res = await fetch(`/api/surgery-schedules/${id}`, {
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/surgery-schedules/${deleteTargetId}`, {
       method: "DELETE",
     });
     if (res.ok) fetchSchedules();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -501,7 +506,7 @@ export default function SurgeriesPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(s.id)}
+                        onClick={() => { setDeleteTargetId(s.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -523,6 +528,14 @@ export default function SurgeriesPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR CIRURGIA"
+        description="Tem certeza que deseja excluir esta cirurgia? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

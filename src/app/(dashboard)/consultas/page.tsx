@@ -38,6 +38,7 @@ import {
   statusColors,
   statusBadgeStyle,
 } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Patient {
   id: string;
@@ -96,6 +97,8 @@ export default function AppointmentsPage() {
     useState<Appointment | null>(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -170,10 +173,12 @@ export default function AppointmentsPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta consulta?")) return;
-    const res = await fetch(`/api/appointments/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/appointments/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchAppointments();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const handleExportPDF = () => {
@@ -491,7 +496,7 @@ export default function AppointmentsPage() {
                         </button>
                         <button
                           className={formStyles.button.delete}
-                          onClick={() => handleDelete(a.id)}
+                          onClick={() => { setDeleteTargetId(a.id); setDeleteConfirmOpen(true); }}
                         >
                           <HiTrash className="h-3.5 w-3.5" />
                         </button>
@@ -525,6 +530,14 @@ export default function AppointmentsPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR CONSULTA"
+        description="Tem certeza que deseja excluir esta consulta? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

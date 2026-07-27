@@ -36,6 +36,7 @@ import { FaUserMd } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formStyles } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Doctor {
   id: string;
@@ -59,6 +60,8 @@ export default function DoctorsPage() {
   const [loading, setLoading] = useState(false);
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -132,10 +135,12 @@ export default function DoctorsPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este medico?")) return;
-    const res = await fetch(`/api/doctors/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/doctors/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchDoctors();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -398,7 +403,7 @@ export default function DoctorsPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(d.id)}
+                        onClick={() => { setDeleteTargetId(d.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -420,6 +425,14 @@ export default function DoctorsPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR MEDICO"
+        description="Tem certeza que deseja excluir este medico? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

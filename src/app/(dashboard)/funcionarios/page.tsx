@@ -34,6 +34,7 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formStyles } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Employee {
   id: string;
@@ -53,6 +54,8 @@ export default function EmployeesPage() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -128,10 +131,12 @@ export default function EmployeesPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este funcionario?")) return;
-    const res = await fetch(`/api/employees/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/employees/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchEmployees();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -430,7 +435,7 @@ export default function EmployeesPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(e.id)}
+                        onClick={() => { setDeleteTargetId(e.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -452,6 +457,14 @@ export default function EmployeesPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR FUNCIONARIO"
+        description="Tem certeza que deseja excluir este funcionario? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

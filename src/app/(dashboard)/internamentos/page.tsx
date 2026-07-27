@@ -32,6 +32,7 @@ import {
   statusColors,
   statusBadgeStyle,
 } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Patient {
   id: string;
@@ -77,6 +78,10 @@ export default function AdmissionsPage() {
   const [beds, setBeds] = useState<Bed[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dischargeConfirmOpen, setDischargeConfirmOpen] = useState(false);
+  const [dischargeTargetId, setDischargeTargetId] = useState<string | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -128,9 +133,9 @@ export default function AdmissionsPage() {
     }
   };
 
-  const handleDischarge = async (id: string) => {
-    if (!confirm("Confirmar alta do paciente?")) return;
-    const res = await fetch(`/api/admissions/${id}`, {
+  const handleDischarge = async () => {
+    if (!dischargeTargetId) return;
+    const res = await fetch(`/api/admissions/${dischargeTargetId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -142,15 +147,19 @@ export default function AdmissionsPage() {
       fetchAdmissions();
       fetchBeds();
     }
+    setDischargeConfirmOpen(false);
+    setDischargeTargetId(null);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este internamento?")) return;
-    const res = await fetch(`/api/admissions/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/admissions/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) {
       fetchAdmissions();
       fetchBeds();
     }
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -420,7 +429,7 @@ export default function AdmissionsPage() {
                       {a.status === "ACTIVE" && (
                         <button
                           className="flex h-7 w-7 items-center justify-center text-[#555555] hover:bg-[#4AF626]/10 hover:text-[#4AF626] transition-colors"
-                          onClick={() => handleDischarge(a.id)}
+                          onClick={() => { setDischargeTargetId(a.id); setDischargeConfirmOpen(true); }}
                           title="Dar alta"
                         >
                           <FaCheckCircle className="h-3.5 w-3.5" />
@@ -428,7 +437,7 @@ export default function AdmissionsPage() {
                       )}
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(a.id)}
+                        onClick={() => { setDeleteTargetId(a.id); setDeleteConfirmOpen(true); }}
                         title="Excluir"
                       >
                         <HiTrash className="h-3.5 w-3.5" />
@@ -451,6 +460,22 @@ export default function AdmissionsPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={dischargeConfirmOpen}
+        onOpenChange={setDischargeConfirmOpen}
+        title="CONFIRMAR ALTA"
+        description="Tem certeza que deseja dar alta a este paciente? O leito será liberado."
+        onConfirm={handleDischarge}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR INTERNAMENTO"
+        description="Tem certeza que deseja excluir este internamento? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

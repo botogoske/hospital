@@ -33,6 +33,7 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formStyles } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Medication {
   id: string;
@@ -52,6 +53,8 @@ export default function MedicationsPage() {
   const [editingMedication, setEditingMedication] = useState<Medication | null>(
     null,
   );
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -104,10 +107,12 @@ export default function MedicationsPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este medicamento?")) return;
-    const res = await fetch(`/api/medications/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/medications/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchMedications();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -387,7 +392,7 @@ export default function MedicationsPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(m.id)}
+                        onClick={() => { setDeleteTargetId(m.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -409,6 +414,14 @@ export default function MedicationsPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR MEDICAMENTO"
+        description="Tem certeza que deseja excluir este medicamento? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

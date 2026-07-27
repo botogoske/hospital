@@ -38,6 +38,7 @@ import {
   statusColors,
   statusBadgeStyle,
 } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Bed {
   id: string;
@@ -74,6 +75,8 @@ export default function BedsPage() {
   const [search, setSearch] = useState("");
   const [editingBed, setEditingBed] = useState<Bed | null>(null);
   const [selectedType, setSelectedType] = useState("REGULAR");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -129,10 +132,12 @@ export default function BedsPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este leito?")) return;
-    const res = await fetch(`/api/beds/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/beds/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchBeds();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -401,7 +406,7 @@ export default function BedsPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(bed.id)}
+                        onClick={() => { setDeleteTargetId(bed.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -425,6 +430,14 @@ export default function BedsPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR LEITO"
+        description="Tem certeza que deseja excluir este leito? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

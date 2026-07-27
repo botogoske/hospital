@@ -28,6 +28,7 @@ import { FaStethoscope } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formStyles } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Specialty {
   id: string;
@@ -43,6 +44,8 @@ export default function SpecialtiesPage() {
   const [editingSpecialty, setEditingSpecialty] = useState<Specialty | null>(
     null,
   );
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -90,10 +93,12 @@ export default function SpecialtiesPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta especialidade?")) return;
-    const res = await fetch(`/api/specialties/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/specialties/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchSpecialties();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -258,7 +263,7 @@ export default function SpecialtiesPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(s.id)}
+                        onClick={() => { setDeleteTargetId(s.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -280,6 +285,14 @@ export default function SpecialtiesPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR ESPECIALIDADE"
+        description="Tem certeza que deseja excluir esta especialidade? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

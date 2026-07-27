@@ -38,6 +38,7 @@ import { FaNotesMedical } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { formStyles } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Patient {
   id: string;
@@ -70,6 +71,8 @@ export default function MedicalRecordsPage() {
   const [editingRecord, setEditingRecord] = useState<MedicalRecord | null>(
     null,
   );
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -139,10 +142,12 @@ export default function MedicalRecordsPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este prontuario?")) return;
-    const res = await fetch(`/api/medical-records/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/medical-records/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchRecords();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -422,7 +427,7 @@ export default function MedicalRecordsPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(r.id)}
+                        onClick={() => { setDeleteTargetId(r.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -444,6 +449,14 @@ export default function MedicalRecordsPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR PRONTUARIO"
+        description="Tem certeza que deseja excluir este prontuario? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

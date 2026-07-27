@@ -38,6 +38,7 @@ import {
   statusColors,
   statusBadgeStyle,
 } from "@/styles/form-styles";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface HealthPlan {
   id: string;
@@ -67,6 +68,8 @@ export default function HealthPlansPage() {
   const [search, setSearch] = useState("");
   const [editingPlan, setEditingPlan] = useState<HealthPlan | null>(null);
   const [selectedCoverage, setSelectedCoverage] = useState("STANDARD");
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     register,
@@ -125,10 +128,12 @@ export default function HealthPlansPage() {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este plano de saude?")) return;
-    const res = await fetch(`/api/health-plans/${id}`, { method: "DELETE" });
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    const res = await fetch(`/api/health-plans/${deleteTargetId}`, { method: "DELETE" });
     if (res.ok) fetchHealthPlans();
+    setDeleteConfirmOpen(false);
+    setDeleteTargetId(null);
   };
 
   const exportPdf = () => {
@@ -406,7 +411,7 @@ export default function HealthPlansPage() {
                       </button>
                       <button
                         className={formStyles.button.delete}
-                        onClick={() => handleDelete(plan.id)}
+                        onClick={() => { setDeleteTargetId(plan.id); setDeleteConfirmOpen(true); }}
                       >
                         <HiTrash className="h-3.5 w-3.5" />
                       </button>
@@ -430,6 +435,14 @@ export default function HealthPlansPage() {
           </Table>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="EXCLUIR PLANO DE SAUDE"
+        description="Tem certeza que deseja excluir este plano de saude? Esta ação não pode ser desfeita."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
