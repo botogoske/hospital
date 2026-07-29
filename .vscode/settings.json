@@ -2,7 +2,7 @@
   "terminal.integrated.fontFamily": "'JetBrains Mono'",
   "editor.fontFamily": "'Geist Mono'",
   "editor.fontSize": 13,
-  "terminal.integrated.fontSize": 12,
+  "terminal.integrated.fontSize": 13,
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "editor.formatOnSave": true,
   "[typescriptreact]": {
