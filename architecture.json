@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Hospital Greguito",
+    "subtitle": "Sistema de Gestão Hospitalar — Next.js + Prisma + PostgreSQL",
+    "output": "hospital-architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "patient-flow", "label": "Fluxo do Paciente", "focus": ["browser", "frontend", "api", "prisma", "postgres"], "note": "Caminho principal: do navegador ao banco de dados." },
+      { "id": "auth-flow", "label": "Autenticação", "focus": ["browser", "frontend", "api", "bcrypt"], "note": "Login e verificação de credenciais via bcrypt." },
+      { "id": "data-model", "label": "Modelos de Dados", "focus": ["prisma", "postgres"], "note": "14 modelos Prisma e 9 enums no PostgreSQL." }
+    ]
+  },
+  "components": [
+    { "id": "browser", "type": "external", "label": "Navegador", "sublabel": "pt-BR / Interface Tactical", "pos": [40, 280], "size": [130, 60] },
+    { "id": "frontend", "type": "frontend", "label": "Next.js Frontend", "sublabel": "React 19 + shadcn/ui + Tailwind v4", "pos": [260, 280], "size": [160, 60], "tag": "11 páginas client-rendered" },
+    { "id": "api", "type": "backend", "label": "API Routes", "sublabel": "App Router REST Handlers", "pos": [520, 280], "size": [160, 60], "tag": "16 endpoints / ~46 handlers" },
+    { "id": "bcrypt", "type": "security", "label": "bcryptjs", "sublabel": "Hash de senhas", "pos": [520, 100], "size": [140, 56] },
+    { "id": "prisma", "type": "backend", "label": "Prisma ORM", "sublabel": "v7.8 + PrismaPg Adapter", "pos": [770, 280], "size": [160, 60], "tag": "Singleton + Transactions" },
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "localhost:5432 / dblab02", "pos": [1020, 280], "size": [150, 60], "tag": "14 tabelas / 9 enums" },
+    { "id": "jspdf", "type": "frontend", "label": "jsPDF", "sublabel": "Geração de PDF no cliente", "pos": [260, 440], "size": [140, 56] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Servidor Next.js", "wraps": ["api", "bcrypt", "prisma"] },
+    { "kind": "security-group", "label": "Autenticação", "wraps": ["api", "bcrypt"] }
+  ],
+  "connections": [
+    { "id": "browser-to-frontend", "from": "browser", "to": "frontend", "label": "HTTP / Render", "variant": "emphasis" },
+    { "id": "frontend-to-api", "from": "frontend", "to": "api", "label": "fetch() JSON", "variant": "emphasis" },
+    { "id": "api-auth", "from": "api", "to": "bcrypt", "label": "verificar senha", "variant": "security", "fromSide": "top", "toSide": "bottom", "via": [[590, 240], [590, 156]] },
+    { "id": "api-to-prisma", "from": "api", "to": "prisma", "label": "ORM Queries", "variant": "emphasis" },
+    { "id": "prisma-to-pg", "from": "prisma", "to": "postgres", "label": "SQL via PrismaPg", "variant": "emphasis", "labelAt": [960, 354] },
+    { "id": "frontend-pdf", "from": "frontend", "to": "jspdf", "label": "exportar PDF", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "via": [[340, 380], [330, 400]] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Frontend", "items": ["React 19 com Client Components", "11 páginas CRUD (pt-BR)", "shadcn/ui + Tailwind CSS v4", "React Hook Form + Zod validation"] },
+    { "dot": "emerald", "title": "API Layer", "items": ["14 endpoints REST (CRUD completo)", "Autenticação customizada (bcrypt)", "Transações Prisma para internamentos", "Stats agregados via Promise.all"] },
+    { "dot": "rose", "title": "Dados", "items": ["14 modelos Prisma (User, Doctor, Patient, etc.)", "9 enums (Role, BedStatus, AdmissionStatus, etc.)", "UUID primary keys + FK constraints", "Driver adapter PrismaPg (não engine)"] }
+  ]
+}
