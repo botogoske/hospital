@@ -147,13 +147,21 @@ enum SurgeryStatus {
 }
 
 model SurgeryMaterial {
-  id        String  @id @default(uuid())
-  surgeryId String
-  surgery   Surgery @relation(fields: [surgeryId], references: [id])
-  name      String
-  quantity  Int
-  unit      String
+  id          String   @id @default(uuid())
+  code        String?
+  name        String
+  category    String   @default("GERAL")
+  quantity    Int      @default(0)
+  unit        String   @default("UN")
+  minQuantity Int      @default(10)
+  unitPrice   Float    @default(0)
+  description String?
+  surgeryId   String?
+  surgery     Surgery? @relation(fields: [surgeryId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
+
 
 model MedicalRecord {
   id            String    @id @default(uuid())

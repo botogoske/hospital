@@ -17,6 +17,7 @@ import {
   FaNotesMedical,
   FaHospital,
   FaClipboardList,
+  FaCut,
 } from "react-icons/fa";
 
 interface Stats {
@@ -31,6 +32,7 @@ interface Stats {
   totalEmployees: number;
   totalAdmissions: number;
   totalHealthPlans: number;
+  totalSurgicalMaterials: number;
 }
 
 export default function DashboardPage() {
@@ -53,6 +55,7 @@ export default function DashboardPage() {
           totalEmployees: 110,
           totalAdmissions: 32,
           totalHealthPlans: 8,
+          totalSurgicalMaterials: 145,
         });
       });
   }, []);
@@ -106,6 +109,13 @@ export default function DashboardPage() {
           value: stats.totalMedications.toLocaleString("pt-BR"),
           description: "ITENS EM ESTOQUE",
           icon: HiBeaker,
+          accent: false,
+        },
+        {
+          title: "MATERIAIS CIRURGICOS",
+          value: (stats.totalSurgicalMaterials || 0).toLocaleString("pt-BR"),
+          description: "INSUMOS E INSTRUMENTAIS",
+          icon: FaCut,
           accent: false,
         },
         {
@@ -325,6 +335,23 @@ export default function DashboardPage() {
                 </h4>
                 <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
                   CADASTRAR E ADMINISTRAR LEITOS HOSPITALARES
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/materiais-cirurgicos"
+              className="group flex items-start gap-3 bg-[#0D0D0D] p-4 hover:bg-[#141414] transition-colors"
+            >
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center bg-[#1A1A1A] text-[#777777] border border-[#333333] group-hover:bg-[#E61919] group-hover:text-white group-hover:border-[#E61919] transition-colors">
+                <FaCut className="h-3.5 w-3.5" />
+              </div>
+              <div>
+                <h4 className="font-mono text-[11px] uppercase tracking-wider text-[#EAEAEA]">
+                  MATERIAIS CIRURGICOS
+                </h4>
+                <p className="font-mono text-[9px] uppercase tracking-[0.06em] text-[#555555] mt-1">
+                  GERENCIAR INSUMOS E MATERIAIS CIRURGICOS
                 </p>
               </div>
             </Link>

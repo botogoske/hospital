@@ -19,6 +19,7 @@ import {
   FaProcedures,
   FaStethoscope,
   FaHospital,
+  FaCut,
 } from "react-icons/fa";
 
 const menuGroups = [
@@ -43,6 +44,7 @@ const menuGroups = [
       { href: "/especialidades", label: "Especialidades", icon: FaStethoscope },
       { href: "/funcionarios", label: "Funcionarios", icon: HiUsers },
       { href: "/medicamentos", label: "Medicamentos", icon: HiBeaker },
+      { href: "/materiais-cirurgicos", label: "Materiais Cirurgicos", icon: FaCut },
       { href: "/leitos", label: "Leitos", icon: FaBed },
       {
         href: "/planos-de-saude",

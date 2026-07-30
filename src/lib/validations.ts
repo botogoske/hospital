@@ -157,10 +157,17 @@ export const specialtySchema = z.object({
 });
 
 export const surgeryMaterialSchema = z.object({
+  code: z.string().optional().or(z.literal("")),
   name: z.string().min(3, "Nome deve ter no mínimo 3 caracteres"),
-  quantity: z.number().min(1, "Quantidade deve ser positiva"),
+  category: z.string().min(1, "Categoria é obrigatória"),
+  quantity: z.number().min(0, "Quantidade não pode ser negativa"),
   unit: z.string().min(1, "Unidade é obrigatória"),
+  minQuantity: z.number().min(0, "Estoque mínimo não pode ser negativo"),
+  unitPrice: z.number().min(0, "Preço unitário não pode ser negativo"),
+  surgeryId: z.string().optional().or(z.literal("")),
+  description: z.string().optional().or(z.literal("")),
 });
+
 
 export type LoginInput = z.infer<typeof loginSchema>;
 export type EmployeeInput = z.infer<typeof employeeSchema>;
