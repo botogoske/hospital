@@ -4498,10 +4498,10 @@
         <div class="pulse-dot"></div>
         <h1>Hospital Greguito</h1>
       </div>
-      <p class="subtitle">Sistema de Gestão Hospitalar — Next.js + Prisma + PostgreSQL</p>
+      <p class="subtitle">Sistema de Gestão Hospitalar — Next.js + Prisma + SQLite</p>
     </div>
 
-    <script id="archify-guided-views-data" type="application/json">[{"id":"patient-flow","label":"Fluxo do Paciente","focus":["browser","frontend","api","prisma","postgres"],"note":"Caminho principal: do navegador ao banco de dados."},{"id":"auth-flow","label":"Autenticação","focus":["browser","frontend","api","bcrypt"],"note":"Login e verificação de credenciais via bcrypt."},{"id":"data-model","label":"Modelos de Dados","focus":["prisma","postgres"],"note":"14 modelos Prisma e 9 enums no PostgreSQL."}]</script>
+    <script id="archify-guided-views-data" type="application/json">[{"id":"patient-flow","label":"Fluxo do Paciente","focus":["browser","frontend","api","prisma","sqlite"],"note":"Caminho principal: do navegador ao banco de dados."},{"id":"auth-flow","label":"Autenticação","focus":["browser","frontend","api","bcrypt"],"note":"Login e verificação de credenciais via bcrypt."},{"id":"data-model","label":"Modelos de Dados","focus":["prisma","sqlite"],"note":"14 modelos Prisma no SQLite."}]</script>
 
     <div class="guided-views no-print" id="guided-views" hidden aria-label="Guided diagram views">
       <button id="guided-view-prev" type="button" aria-label="Previous guided view" title="Previous guided view ([)">&#8592;</button>
@@ -4546,7 +4546,7 @@
     <div class="diagram-container" data-detail-level="map">
       <svg viewBox="0 0 1210 564" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="classic" data-quality-profile="showcase">
         <title id="archify-diagram-title">Hospital Greguito</title>
-        <desc id="archify-diagram-description">Sistema de Gestão Hospitalar — Next.js + Prisma + PostgreSQL</desc>
+        <desc id="archify-diagram-description">Sistema de Gestão Hospitalar — Next.js + Prisma + SQLite</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -4581,7 +4581,7 @@
         <path data-edge-from="frontend" data-edge-to="api" data-edge-label="fetch() JSON" data-edge-key="1" data-edge-id="frontend-to-api" data-composition-points="420,310;520,310" d="M 420 310 L 520 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <path data-edge-from="api" data-edge-to="bcrypt" data-edge-label="verificar senha" data-edge-key="2" data-edge-id="api-auth" data-composition-points="600,280;590,240;590,156;590,156" d="M 600 280 L 591.9402850002907 247.76114000116266 Q 590 240 590 232 L 590 156 L 590 156" class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
         <path data-edge-from="api" data-edge-to="prisma" data-edge-label="ORM Queries" data-edge-key="3" data-edge-id="api-to-prisma" data-composition-points="680,310;770,310" d="M 680 310 L 770 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="prisma" data-edge-to="postgres" data-edge-label="SQL via PrismaPg" data-edge-key="4" data-edge-id="prisma-to-pg" data-composition-points="930,310;1020,310" d="M 930 310 L 1020 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="prisma" data-edge-to="sqlite" data-edge-label="SQL via BetterSQLite3" data-edge-key="4" data-edge-id="prisma-to-sqlite" data-composition-points="930,310;1020,310" d="M 930 310 L 1020 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <path data-edge-from="frontend" data-edge-to="jspdf" data-edge-label="exportar PDF" data-edge-key="5" data-edge-id="frontend-pdf" data-composition-points="340,340;340,380;330,400;330,440" d="M 340 340 L 340 372 Q 340 380 336.4222912360003 387.1554175279993 L 333.5777087639997 392.8445824720007 Q 330 400 330 408 L 330 440" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
 
         <!-- Components -->
@@ -4636,28 +4636,28 @@
         <text data-detail="context" x="590" y="142" class="t-muted" font-size="9" text-anchor="middle">Hash de senhas</text>
         </g>
 
-        <g id="node-prisma" data-node-id="prisma" data-node-label="Prisma ORM" tabindex="0" role="button" aria-label="Focus Prisma ORM, v7.8 + PrismaPg Adapter, Servidor Next.js" aria-pressed="false" data-node-kind="backend" data-node-sublabel="v7.8 + PrismaPg Adapter" data-node-tag="Singleton + Transactions" data-node-context="Servidor Next.js">
-          <title>Prisma ORM · v7.8 + PrismaPg Adapter · Servidor Next.js · Singleton + Transactions</title>
+        <g id="node-prisma" data-node-id="prisma" data-node-label="Prisma ORM" tabindex="0" role="button" aria-label="Focus Prisma ORM, v7.8 + PrismaBetterSQLite3 Adapter, Servidor Next.js" aria-pressed="false" data-node-kind="backend" data-node-sublabel="v7.8 + PrismaBetterSQLite3 Adapter" data-node-tag="Singleton + Transactions" data-node-context="Servidor Next.js">
+          <title>Prisma ORM · v7.8 + PrismaBetterSQLite3 Adapter · Servidor Next.js · Singleton + Transactions</title>
           <rect x="770" y="280" width="160" height="60" rx="6" class="c-mask"/>
           <rect x="770" y="280" width="160" height="60" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(776 286) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-detail-anchor x="850" y="308" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Prisma ORM</text>
-        <text data-detail="context" x="850" y="324" class="t-muted" font-size="9" text-anchor="middle">v7.8 + PrismaPg Adapter</text>
+        <text data-detail="context" x="850" y="324" class="t-muted" font-size="9" text-anchor="middle">v7.8 + PrismaBetterSQLite3 Adapter</text>
         <text data-detail="fine" x="850" y="332" class="t-backend" font-size="7" text-anchor="middle">Singleton + Transactions</text>
         </g>
 
-        <g id="node-postgres" data-node-id="postgres" data-node-label="PostgreSQL" tabindex="0" role="button" aria-label="Focus PostgreSQL, localhost:5432 / dblab02, Architecture component" aria-pressed="false" data-node-kind="database" data-node-sublabel="localhost:5432 / dblab02" data-node-tag="14 tabelas / 9 enums" data-node-context="Architecture component">
-          <title>PostgreSQL · localhost:5432 / dblab02 · Architecture component · 14 tabelas / 9 enums</title>
+        <g id="node-sqlite" data-node-id="sqlite" data-node-label="SQLite" tabindex="0" role="button" aria-label="Focus SQLite, dev.db, Architecture component" aria-pressed="false" data-node-kind="database" data-node-sublabel="dev.db" data-node-tag="14 tabelas" data-node-context="Architecture component">
+          <title>SQLite · dev.db · Architecture component · 14 tabelas</title>
           <rect x="1020" y="280" width="150" height="60" rx="6" class="c-mask"/>
           <rect x="1020" y="280" width="150" height="60" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1026 286) scale(0.6875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="1095" y="308" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">PostgreSQL</text>
-        <text data-detail="context" x="1095" y="324" class="t-muted" font-size="9" text-anchor="middle">localhost:5432 / dblab02</text>
+          <text data-detail-anchor x="1095" y="308" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">SQLite</text>
+        <text data-detail="context" x="1095" y="324" class="t-muted" font-size="9" text-anchor="middle">dev.db</text>
         <text data-detail="fine" x="1095" y="332" class="t-database" font-size="7" text-anchor="middle">14 tabelas / 9 enums</text>
         </g>
 
@@ -4692,9 +4692,9 @@
           <rect x="693.6" y="290" width="62.8" height="14" rx="3" class="c-mask"/>
           <text x="725" y="300" class="t-backend" font-size="8" text-anchor="middle">ORM Queries</text>
         </g>
-        <g data-detail="context" data-edge-from="prisma" data-edge-to="postgres" data-edge-label="SQL via PrismaPg" data-edge-key="4" data-edge-id="prisma-to-pg">
+        <g data-detail="context" data-edge-from="prisma" data-edge-to="sqlite" data-edge-label="SQL via BetterSQLite3" data-edge-key="4" data-edge-id="prisma-to-sqlite">
           <rect x="916.6" y="344" width="86.8" height="14" rx="3" class="c-mask"/>
-          <text x="960" y="354" class="t-backend" font-size="8" text-anchor="middle">SQL via PrismaPg</text>
+          <text x="960" y="354" class="t-backend" font-size="8" text-anchor="middle">SQL via BetterSQLite3</text>
         </g>
         <g data-detail="context" data-edge-from="frontend" data-edge-to="jspdf" data-edge-label="exportar PDF" data-edge-key="5" data-edge-id="frontend-pdf">
           <rect x="301.2" y="370" width="67.6" height="14" rx="3" class="c-mask"/>
@@ -4941,9 +4941,9 @@
         </div>
         <ul>
           <li>&bull; 14 modelos Prisma (User, Doctor, Patient, etc.)</li>
-          <li>&bull; 9 enums (Role, BedStatus, AdmissionStatus, etc.)</li>
+          <li>&bull; Status representados por strings compatíveis com SQLite</li>
           <li>&bull; UUID primary keys + FK constraints</li>
-          <li>&bull; Driver adapter PrismaPg (não engine)</li>
+          <li>&bull; Driver adapter PrismaBetterSQLite3</li>
         </ul>
       </div>
     </div>

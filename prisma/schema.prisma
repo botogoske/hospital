@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model User {
@@ -13,17 +13,11 @@ model User {
   username      String    @unique
   password      String
   name          String
-  role          Role      @default(EMPLOYEE)
+  role          String    @default("EMPLOYEE")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   employee      Employee?
   doctor        Doctor?
-}
-
-enum Role {
-  ADMIN
-  DOCTOR
-  EMPLOYEE
 }
 
 model Employee {
@@ -110,18 +104,11 @@ model Surgery {
   name          String
   description   String?
   duration      Int
-  riskLevel     RiskLevel
+  riskLevel     String
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   schedules     SurgerySchedule[]
   materials     SurgeryMaterial[]
-}
-
-enum RiskLevel {
-  LOW
-  MEDIUM
-  HIGH
-  CRITICAL
 }
 
 model SurgerySchedule {
@@ -133,17 +120,10 @@ model SurgerySchedule {
   patientId   String
   patient     Patient   @relation(fields: [patientId], references: [id])
   scheduledAt DateTime
-  status      SurgeryStatus @default(SCHEDULED)
+  status      String    @default("SCHEDULED")
   notes       String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-}
-
-enum SurgeryStatus {
-  SCHEDULED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
 }
 
 model SurgeryMaterial {
@@ -183,26 +163,12 @@ model Bed {
   number        String          @unique
   ward          String
   floor         Int
-  status        BedStatus       @default(AVAILABLE)
-  bedType       BedType
+  status        String          @default("AVAILABLE")
+  bedType       String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   reservations  BedReservation[]
   admissions    Admission[]
-}
-
-enum BedStatus {
-  AVAILABLE
-  OCCUPIED
-  MAINTENANCE
-  RESERVED
-}
-
-enum BedType {
-  REGULAR
-  ICU
-  EMERGENCY
-  PEDIATRIC
 }
 
 model BedReservation {
@@ -213,7 +179,7 @@ model BedReservation {
   patient     Patient   @relation(fields: [patientId], references: [id])
   checkIn     DateTime
   checkOut    DateTime?
-  status      ReservationStatus @default(ACTIVE)
+  status      String    @default("ACTIVE")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -230,21 +196,9 @@ model Admission {
   predictedDischargeDate DateTime?
   dischargeDate          DateTime?
   notes                  String?
-  status        AdmissionStatus @default(ACTIVE)
+  status        String    @default("ACTIVE")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-}
-
-enum AdmissionStatus {
-  ACTIVE
-  DISCHARGED
-  CANCELLED
-}
-
-enum ReservationStatus {
-  ACTIVE
-  COMPLETED
-  CANCELLED
 }
 
 model HealthPlan {
@@ -252,17 +206,11 @@ model HealthPlan {
   name               String
   provider           String
   registrationNumber String       @unique
-  coverageType       CoverageType @default(STANDARD)
+  coverageType       String       @default("STANDARD")
   isActive           Boolean      @default(true)
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
   appointments       Appointment[]
-}
-
-enum CoverageType {
-  BASIC
-  STANDARD
-  PREMIUM
 }
 
 model Appointment {
@@ -274,16 +222,8 @@ model Appointment {
   healthPlanId  String?
   healthPlan    HealthPlan? @relation(fields: [healthPlanId], references: [id])
   scheduledAt   DateTime
-  status        AppointmentStatus @default(SCHEDULED)
+  status        String    @default("SCHEDULED")
   notes         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-}
-
-enum AppointmentStatus {
-  SCHEDULED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
-  NO_SHOW
 }
